@@ -5,11 +5,11 @@
 - Ensure git is installed on the machine
 - ensure node is installed on the machine
 
-To run, follow these commands in your terminal (or command prompt):
+Follow these commands in your terminal (or command prompt):
 
 ### Setup
 
-Run the following commands in order in your terminal (in a folder of your choosing)
+Run the following commands in order in your terminal:
 
 ```
 git clone https://github.com/david20o7/game-project.git
@@ -21,7 +21,7 @@ npm install
 node setup.js
 ```
 
-### Running the project (TBD)
+### Running instructions (TBD)
 
 To start the API, run:
 
