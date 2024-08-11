@@ -1,0 +1,36 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+
+#box {
+  border: 2px solid black;
+  width: 600px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#sprite {
+  width: 25px;
+  height: 25px;
+  background: red;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+#chaser {
+  width: 15px;
+  height: 15px;
+  background: blue;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
