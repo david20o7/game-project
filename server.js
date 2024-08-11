@@ -1,52 +1,22 @@
-/*const express = require("express"); //import express
-const SQL = require("sqlite3").verbose(); // import sqlite3 Import java.util.Database
-const path = require("path");
-
-const app = express();
-
-const PORT = 3000;
-
-const Database_Name = "my-database.db";
-const db = new SQL.Database(Database_Name);
-
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, "public", "login")));
-
-// Route for the root URL
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login", "index.html"));
-});
-
-app.get("/users", (req, res) => {
-  //run a query where we want to process the output
-  db.all("SELECT * FROM user", (error, rows) => {
-    const names = rows.map((row) => {
-      return row.name;
-    });
-
-    res.send(names.join(", "));
-  });
-});
-
-app.get("/boo", (req, res) => {
-  res.send("you have reached BOO");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(`To stop the server, CTRL + C`);
-});
-*/
 const express = require("express"); //import express
 const SQL = require("sqlite3").verbose(); // import sqlite3
 const path = require("path");
 
+const livereload = require("livereload");
+const connectLivereload = require("connect-livereload");
+
+// Set up LiveReload server
+const liveReloadServer = livereload.createServer();
+liveReloadServer.watch(__dirname + "/public");
+
 const app = express();
 
 const PORT = 3000;
 
 const Database_Name = "my-database.db";
 const db = new SQL.Database(Database_Name);
+
+app.use(connectLivereload());
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
@@ -59,6 +29,10 @@ app.get("/login", (req, res) => {
 
 app.get("/register", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "register", "index.html"));
+});
+
+app.get("/movement", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "movement", "index.html"));
 });
 
 app.get("/users", (req, res) => {
@@ -87,6 +61,13 @@ app.get("/boo", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}/login/`);
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`try http://localhost:${PORT}/movement`);
   console.log(`To stop the server, CTRL + C`);
+});
+
+liveReloadServer.server.once("connection", () => {
+  setTimeout(() => {
+    liveReloadServer.refresh("/");
+  }, 100);
 });
