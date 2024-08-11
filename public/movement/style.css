@@ -4,11 +4,11 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-color: #f0f0f0;
+  background-color: black;
 }
 
 #box {
-  border: 2px solid black;
+  border: 2px solid rgb(99, 99, 99);
   width: 600px;
   height: 600px;
   display: flex;
@@ -22,8 +22,8 @@ body {
   height: 25px;
   background: red;
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: 200px;
+  bottom: 200px;
 }
 
 #chaser {
@@ -31,6 +31,6 @@ body {
   height: 15px;
   background: blue;
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: 200px;
+  bottom: 200px;
 }

@@ -8,9 +8,18 @@ let keysPressed = {};
 
 const toNum = (pxVal) => parseInt(pxVal, 10) || 0;
 
-const updatePosition = () => {
-  let left = toNum(sprite.style.left);
-  let bottom = toNum(sprite.style.bottom);
+const updatePosition = (isInit = false) => {
+  let left = 0;
+  let bottom = 0;
+
+  if (isInit) {
+    const style = window.getComputedStyle(sprite);
+    left = toNum(style.left);
+    bottom = toNum(style.bottom);
+  } else {
+    left = toNum(sprite.style.left);
+    bottom = toNum(sprite.style.bottom);
+  }
 
   if (keysPressed["ArrowLeft"]) {
     left = Math.max(left - speed, 0);
@@ -64,4 +73,4 @@ const handleKeyUp = (e) => {
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
 
-requestAnimationFrame(updatePosition);
+requestAnimationFrame(() => updatePosition(true));
