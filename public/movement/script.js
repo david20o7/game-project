@@ -2,11 +2,15 @@ const sprite = document.querySelector("#sprite");
 const chaser = document.querySelector("#chaser");
 const box = document.querySelector("#box");
 const healthDisplay = document.querySelector("#healthCount");
+const staminaCount = document.querySelector("#staminaCount");
+const staminaBar = document.querySelector("#staminaBar");
 
 let speed = 2;
 let chaserSpeed = 1;
 let keysPressed = {};
 let health = 100;
+let stamina = 100;
+let staminaLock = false;
 
 const toNum = (pxVal) => parseInt(pxVal, 10) || 0;
 
@@ -23,7 +27,22 @@ const updatePosition = (isInit = false) => {
     bottom = toNum(sprite.style.bottom);
   }
 
-  const currentSpeed = keysPressed["Control"] ? 7 : speed;
+  let currentSpeed = speed;
+
+  if (keysPressed["Control"] && staminaLock === false) {
+    currentSpeed = 7;
+    stamina = Math.max(stamina - 1, 0);
+    if (stamina <= 1) {
+      staminaLock = true;
+    }
+  } else {
+    stamina = Math.min(stamina + 1, 100);
+    if (stamina >= 50) {
+      staminaLock = false;
+    }
+  }
+
+  changeStaminaDisplay(stamina);
 
   if (keysPressed["ArrowLeft"]) {
     left = Math.max(left - currentSpeed, 0);
@@ -78,18 +97,23 @@ const checkCollision = () => {
     spriteRect.top < chaserRect.bottom &&
     spriteRect.bottom > chaserRect.top
   ) {
-    reduceHealth(1);
+    reduceHealthDisplay(1);
   }
 };
 
-const reduceHealth = (amount) => {
+const reduceHealthDisplay = (amount) => {
   health = Math.max(health - amount, 0);
   healthDisplay.textContent = health;
 };
 
+const changeStaminaDisplay = (amount) => {
+  staminaCount.textContent = amount;
+  staminaBar.style.color = staminaLock === true ? "orange" : "green";
+};
+
 const resetGame = () => {
-  health = 100;
-  healthDisplay.textContent = health;
+  healthDisplay.textContent = 100;
+  staminaCount.textContent = 100;
   sprite.style.left = "0px";
   sprite.style.bottom = "0px";
   chaser.style.left = box.clientWidth - chaser.clientWidth + "px";
@@ -108,6 +132,7 @@ window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
 
 let first = true;
+
 setInterval(() => {
   updatePosition(first);
   if (first) {
