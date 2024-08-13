@@ -23,17 +23,22 @@ const updatePosition = (isInit = false) => {
     bottom = toNum(sprite.style.bottom);
   }
 
+  const currentSpeed = keysPressed[" "] ? 7 : speed;
+
   if (keysPressed["ArrowLeft"]) {
-    left = Math.max(left - speed, 0);
+    left = Math.max(left - currentSpeed, 0);
   }
   if (keysPressed["ArrowRight"]) {
-    left = Math.min(left + speed, box.clientWidth - sprite.clientWidth);
+    left = Math.min(left + currentSpeed, box.clientWidth - sprite.clientWidth);
   }
   if (keysPressed["ArrowUp"]) {
-    bottom = Math.min(bottom + speed, box.clientHeight - sprite.clientHeight);
+    bottom = Math.min(
+      bottom + currentSpeed,
+      box.clientHeight - sprite.clientHeight
+    );
   }
   if (keysPressed["ArrowDown"]) {
-    bottom = Math.max(bottom - speed, 0);
+    bottom = Math.max(bottom - currentSpeed, 0);
   }
 
   sprite.style.left = left + "px";
