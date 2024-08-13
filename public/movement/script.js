@@ -1,10 +1,12 @@
 const sprite = document.querySelector("#sprite");
 const chaser = document.querySelector("#chaser");
 const box = document.querySelector("#box");
+const healthDisplay = document.querySelector("#healthBar");
 
 let speed = 5;
 let chaserSpeed = 1;
 let keysPressed = {};
+let health = 100;
 
 const toNum = (pxVal) => parseInt(pxVal, 10) || 0;
 
@@ -38,6 +40,7 @@ const updatePosition = (isInit = false) => {
   sprite.style.bottom = bottom + "px";
 
   updateChaserPosition(left, bottom);
+  checkCollision();
 
   requestAnimationFrame(updatePosition);
 };
@@ -60,6 +63,34 @@ const updateChaserPosition = (spriteLeft, spriteBottom) => {
 
   chaser.style.left = chaserLeft + "px";
   chaser.style.bottom = chaserBottom + "px";
+};
+
+const checkCollision = () => {
+  const spriteRect = sprite.getBoundingClientRect();
+  const chaserRect = chaser.getBoundingClientRect();
+
+  if (
+    spriteRect.left < chaserRect.right &&
+    spriteRect.right > chaserRect.left &&
+    spriteRect.top < chaserRect.bottom &&
+    spriteRect.bottom > chaserRect.top
+  ) {
+    reduceHealth(5);
+  }
+};
+
+const reduceHealth = (amount) => {
+  health = Math.max(health - amount, 0);
+  healthDisplay.textContent = `Health: ${health}/100`;
+};
+
+const resetGame = () => {
+  health = 100;
+  healthDisplay.textContent = `Health: ${health}/100`;
+  sprite.style.left = "0px";
+  sprite.style.bottom = "0px";
+  chaser.style.left = box.clientWidth - chaser.clientWidth + "px";
+  chaser.style.bottom = box.clientHeight - chaser.clientHeight + "px";
 };
 
 const handleKeyDown = (e) => {
