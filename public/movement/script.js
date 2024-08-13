@@ -1,9 +1,9 @@
 const sprite = document.querySelector("#sprite");
 const chaser = document.querySelector("#chaser");
 const box = document.querySelector("#box");
-const healthDisplay = document.querySelector("#healthBar");
+const healthDisplay = document.querySelector("#healthCount");
 
-let speed = 5;
+let speed = 2;
 let chaserSpeed = 1;
 let keysPressed = {};
 let health = 100;
@@ -23,7 +23,7 @@ const updatePosition = (isInit = false) => {
     bottom = toNum(sprite.style.bottom);
   }
 
-  const currentSpeed = keysPressed[" "] ? 7 : speed;
+  const currentSpeed = keysPressed["Control"] ? 7 : speed;
 
   if (keysPressed["ArrowLeft"]) {
     left = Math.max(left - currentSpeed, 0);
@@ -46,8 +46,6 @@ const updatePosition = (isInit = false) => {
 
   updateChaserPosition(left, bottom);
   checkCollision();
-
-  requestAnimationFrame(updatePosition);
 };
 
 const updateChaserPosition = (spriteLeft, spriteBottom) => {
@@ -80,18 +78,18 @@ const checkCollision = () => {
     spriteRect.top < chaserRect.bottom &&
     spriteRect.bottom > chaserRect.top
   ) {
-    reduceHealth(5);
+    reduceHealth(1);
   }
 };
 
 const reduceHealth = (amount) => {
   health = Math.max(health - amount, 0);
-  healthDisplay.textContent = `Health: ${health}/100`;
+  healthDisplay.textContent = health;
 };
 
 const resetGame = () => {
   health = 100;
-  healthDisplay.textContent = `Health: ${health}/100`;
+  healthDisplay.textContent = health;
   sprite.style.left = "0px";
   sprite.style.bottom = "0px";
   chaser.style.left = box.clientWidth - chaser.clientWidth + "px";
@@ -109,4 +107,13 @@ const handleKeyUp = (e) => {
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
 
-requestAnimationFrame(() => updatePosition(true));
+let first = true;
+setInterval(() => {
+  updatePosition(first);
+  if (first) {
+    first = false;
+  }
+  // runs at 60 frames per second
+}, 1000 / 60);
+
+// Please document the code as well as you can.
