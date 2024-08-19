@@ -1,12 +1,25 @@
-const sprite = document.querySelector("#sprite");
-const chaser = document.querySelector("#chaser");
+import { Player } from "./Player.js";
+
 const box = document.querySelector("#box");
+
+const player = new Player([box.clientWidth, box.clientHeight]);
+
+const player2 = new Player([box.clientWidth, box.clientHeight], {
+  color: [0, 255, 0],
+  position: [200, 200],
+  elementId: "player2",
+});
+
+const sprite = player.getElement();
+const chaser = document.querySelector("#chaser");
 const healthDisplay = document.querySelector("#healthCount");
 const staminaCount = document.querySelector("#staminaCount");
 const staminaBar = document.querySelector("#staminaBar");
 const attack = document.querySelector("#attack");
 
-let speed = 2;
+// appends
+box.append(sprite, player2.getElement());
+
 let chaserSpeed = 1;
 let keysPressed = {};
 let health = 100;
@@ -19,30 +32,22 @@ let attackCircle;
 const toNum = (pxVal) => parseInt(pxVal, 10) || 0;
 
 const updatePosition = (isInit = false) => {
-  let left = 0;
-  let bottom = 0;
-
-  if (isInit) {
-    const style = window.getComputedStyle(sprite);
-    left = toNum(style.left);
-    bottom = toNum(style.bottom);
-  } else {
-    left = toNum(sprite.style.left);
-    bottom = toNum(sprite.style.bottom);
-  }
-
-  let currentSpeed = speed;
+  player.updateSpeed(2);
+  player2.updateSpeed(3);
 
   if (keysPressed["Shift"] && staminaLock === false && !isStaminaLocked) {
-    currentSpeed = 7;
+    player.updateSpeed(7);
+    player2.updateSpeed(10);
+
     stamina = Math.max(stamina - 1, 0);
+
     if (stamina <= 0) {
       staminaLock = true;
-      isStaminaLocked = true; // Set lock
+      isStaminaLocked = true;
       setTimeout(() => {
         staminaLock = false;
-        isStaminaLocked = false; // Unlock after 1 seconds
-      }, 1000); // Lock for 1 seconds
+        isStaminaLocked = false;
+      }, 1000); // Lock for 1 second
     }
   } else if (!isStaminaLocked) {
     stamina = Math.min(stamina + 1, 100);
@@ -53,19 +58,8 @@ const updatePosition = (isInit = false) => {
 
   changeStaminaDisplay(stamina);
 
-  // sprite movement
-  if (keysPressed["ArrowLeft"] || keysPressed["a"] || keysPressed["A"]) {
-    left = Math.max(left - currentSpeed, 0);
-  }
-  if (keysPressed["ArrowRight"] || keysPressed["d"] || keysPressed["D"]) {
-    left = Math.min(left + currentSpeed, box.clientWidth - sprite.clientWidth);
-  }
-  if (keysPressed["ArrowUp"] || keysPressed["w"] || keysPressed["W"]) {
-    bottom = Math.min(bottom + currentSpeed, box.clientHeight - sprite.clientHeight);
-  }
-  if (keysPressed["ArrowDown"] || keysPressed["s"] || keysPressed["S"]) {
-    bottom = Math.max(bottom - currentSpeed, 0);
-  }
+  player.onKeysPressed(keysPressed);
+  player2.onKeysPressed(keysPressed);
 
   // attack stuff
   if (keysPressed[" "]) {
@@ -76,8 +70,10 @@ const updatePosition = (isInit = false) => {
     //make invisible
   }
 
-  sprite.style.left = left + "px";
-  sprite.style.bottom = bottom + "px";
+  player.draw();
+  player2.draw();
+
+  const [left, bottom] = player.getPosition();
 
   moveToCenter(sprite, attack, left, bottom);
 
@@ -175,15 +171,6 @@ const reduceHealthDisplay = (amount) => {
 const changeStaminaDisplay = (amount) => {
   staminaCount.textContent = amount;
   staminaBar.style.color = staminaLock === true ? "orange" : "green";
-};
-
-const resetGame = () => {
-  healthDisplay.textContent = 100;
-  staminaCount.textContent = 100;
-  sprite.style.left = "0px";
-  sprite.style.bottom = "0px";
-  chaser.style.left = box.clientWidth - chaser.clientWidth + "px";
-  chaser.style.bottom = box.clientHeight - chaser.clientHeight + "px";
 };
 
 const handleKeyDown = (e) => {
