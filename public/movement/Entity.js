@@ -24,7 +24,7 @@ export class Entity {
     /** @type { [width:number, height:number] }  */
     this.arena = arenaDims;
 
-    this.updatePlayerState(initialState);
+    this.updateEntityState(initialState);
     this.initPlayer();
     this.draw();
   }
@@ -32,7 +32,7 @@ export class Entity {
   /**
    * @private
    */
-  updatePlayerState(state) {
+  updateEntityState(state) {
     Object.assign(this.state, state);
   }
 
@@ -91,7 +91,7 @@ export class Entity {
     const newX = clamp(this.state.position[0] + newSpeed[0], 0, this.arena[0] - this.state.size);
     const newY = clamp(this.state.position[1] + newSpeed[1], 0, this.arena[1] - this.state.size);
 
-    this.updatePlayerState({ position: [newX, newY] });
+    this.updateEntityState({ position: [newX, newY] });
   }
 
   getElement() {

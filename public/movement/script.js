@@ -1,43 +1,40 @@
 import { Player } from "./Player.js";
+import { Chaser } from "./Chaser.js";
 
 const box = document.querySelector("#box");
 
-const player = new Player([box.clientWidth, box.clientHeight]);
+const arenaDims = [box.clientWidth, box.clientHeight];
 
-const player2 = new Player([box.clientWidth, box.clientHeight], {
-  color: [0, 255, 0],
-  position: [200, 200],
-  elementId: "player2",
+const player = new Player(arenaDims);
+
+const chaser = new Chaser(arenaDims);
+
+const chaser2 = new Chaser(arenaDims, {
+  speedMultiplier: 1.1,
+  color: [255, 0, 0],
+  position: [100, 800],
 });
 
 const sprite = player.getElement();
-const chaser = document.querySelector("#chaser");
 const healthDisplay = document.querySelector("#healthCount");
 const staminaCount = document.querySelector("#staminaCount");
 const staminaBar = document.querySelector("#staminaBar");
 const attack = document.querySelector("#attack");
 
 // appends
-box.append(sprite, player2.getElement());
+box.append(player.getElement(), chaser.getElement(), chaser2.getElement());
 
-let chaserSpeed = 1;
 let keysPressed = {};
 let health = 100;
 let stamina = 100;
 let staminaLock = false;
 let isStaminaLocked = false; // To track if the stamina is currently locked
 
-let attackCircle;
-
-const toNum = (pxVal) => parseInt(pxVal, 10) || 0;
-
 const updatePosition = (isInit = false) => {
   player.updateSpeed(2);
-  player2.updateSpeed(3);
 
   if (keysPressed["Shift"] && staminaLock === false && !isStaminaLocked) {
     player.updateSpeed(7);
-    player2.updateSpeed(10);
 
     stamina = Math.max(stamina - 1, 0);
 
@@ -59,7 +56,6 @@ const updatePosition = (isInit = false) => {
   changeStaminaDisplay(stamina);
 
   player.onKeysPressed(keysPressed);
-  player2.onKeysPressed(keysPressed);
 
   // attack stuff
   if (keysPressed[" "]) {
@@ -71,19 +67,26 @@ const updatePosition = (isInit = false) => {
   }
 
   player.draw();
-  player2.draw();
 
   const [left, bottom] = player.getPosition();
 
   moveToCenter(sprite, attack, left, bottom);
 
-  const isEnemyHit = areCircleAndSquareColliding(attack, chaser) && attack.style.opacity === "1";
+  const isEnemyHit =
+    areCircleAndSquareColliding(attack, chaser.getElement()) && attack.style.opacity === "1";
   if (isEnemyHit) {
     attack.style.borderColor = "blue";
   } else {
     attack.style.borderColor = "wheat";
   }
-  updateChaserPosition(left, bottom);
+
+  // Update chaser position based on player's position
+  chaser.updateChaserPosition(player.getPosition());
+  chaser2.updateChaserPosition(player.getPosition());
+
+  chaser.draw();
+  chaser2.draw();
+
   checkCollision();
 };
 
@@ -129,29 +132,9 @@ function areCircleAndSquareColliding(circleElement, squareElement) {
   return distanceSquared < circleRadius * circleRadius;
 }
 
-const updateChaserPosition = (spriteLeft, spriteBottom) => {
-  let chaserLeft = toNum(chaser.style.left);
-  let chaserBottom = toNum(chaser.style.bottom);
-
-  if (chaserLeft < spriteLeft) {
-    chaserLeft = Math.min(chaserLeft + chaserSpeed, spriteLeft);
-  } else if (chaserLeft > spriteLeft) {
-    chaserLeft = Math.max(chaserLeft - chaserSpeed, spriteLeft);
-  }
-
-  if (chaserBottom < spriteBottom) {
-    chaserBottom = Math.min(chaserBottom + chaserSpeed, spriteBottom);
-  } else if (chaserBottom > spriteBottom) {
-    chaserBottom = Math.max(chaserBottom - chaserSpeed, spriteBottom);
-  }
-
-  chaser.style.left = chaserLeft + "px";
-  chaser.style.bottom = chaserBottom + "px";
-};
-
 const checkCollision = () => {
   const spriteRect = sprite.getBoundingClientRect();
-  const chaserRect = chaser.getBoundingClientRect();
+  const chaserRect = chaser.getElement().getBoundingClientRect();
 
   if (
     spriteRect.left < chaserRect.right &&

@@ -26,15 +26,6 @@ body {
   position: relative;
 }
 
-#chaser {
-  width: 15px;
-  height: 15px;
-  background: rgb(114, 50, 4);
-  position: absolute;
-  left: 200px;
-  bottom: 200px;
-}
-
 #attack {
   width: 100px;
   height: 100px;
