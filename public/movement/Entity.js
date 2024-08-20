@@ -2,6 +2,7 @@ import { clamp } from "./utilities.js";
 
 export class Entity {
   state = {
+    /** @type { string } */
     elementId: undefined,
 
     /** @type {[x:number, y:number]} */
@@ -48,9 +49,9 @@ export class Entity {
    * @private
    * Updates the player's position in the arena
    */
-  updateElementPosition() {
-    this.element.style.setProperty("left", this.state.position[0] + "px");
-    this.element.style.setProperty("bottom", this.state.position[1] + "px");
+  drawElementPosition() {
+    this.element.style.setProperty("left", this.state.position[0] - this.state.size / 2 + "px");
+    this.element.style.setProperty("bottom", this.state.position[1] - this.state.size / 2 + "px");
   }
 
   /**
@@ -64,7 +65,7 @@ export class Entity {
 
   draw() {
     this.updateElementSize();
-    this.updateElementPosition();
+    this.drawElementPosition();
     this.element.style.setProperty("background-color", `rgb(${this.state.color.join(",")})`);
   }
 
@@ -88,10 +89,14 @@ export class Entity {
       newSpeed[1] = -this.state.speedMultiplier;
     }
 
-    const newX = clamp(this.state.position[0] + newSpeed[0], 0, this.arena[0] - this.state.size);
-    const newY = clamp(this.state.position[1] + newSpeed[1], 0, this.arena[1] - this.state.size);
+    const halfSize = this.state.size / 2;
 
-    this.updateEntityState({ position: [newX, newY] });
+    const newX = clamp(this.state.position[0] + newSpeed[0], halfSize, this.arena[0] - halfSize);
+    const newY = clamp(this.state.position[1] + newSpeed[1], halfSize, this.arena[1] - halfSize);
+
+    const newPosition = [newX, newY];
+    this.updateEntityState({ position: newPosition });
+    return newPosition;
   }
 
   getElement() {

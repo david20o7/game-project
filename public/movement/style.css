@@ -25,14 +25,3 @@ body {
   align-items: center;
   position: relative;
 }
-
-#attack {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  /* background-color: aliceblue; */
-  border: 1px solid wheat;
-  position: absolute;
-  left: 300px;
-  bottom: 300px;
-}

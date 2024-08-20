@@ -1,7 +1,10 @@
 import { Entity } from "./Entity.js";
+import { AreaAttack } from "./AreaAttack.js";
 
 export class Player extends Entity {
   // defines some inits
+
+  attack = new AreaAttack();
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [400, 400],
@@ -11,6 +14,8 @@ export class Player extends Entity {
       speedMultiplier: 2,
       ...initialState,
     });
+
+    this.attack.updatePosition(this.state.position);
   }
 
   onKeysPressed(keysPressed) {
@@ -29,6 +34,19 @@ export class Player extends Entity {
       down = true;
     }
 
-    this.move(left, right, up, down);
+    this.attack.showOrHide(keysPressed[" "]);
+
+    const position = this.move(left, right, up, down);
+
+    this.attack.updatePosition(position);
+  }
+
+  draw() {
+    super.draw();
+    this.attack?.draw();
+  }
+
+  addToBox(box) {
+    box.append(this.element, this.attack.element);
   }
 }

@@ -19,10 +19,10 @@ const sprite = player.getElement();
 const healthDisplay = document.querySelector("#healthCount");
 const staminaCount = document.querySelector("#staminaCount");
 const staminaBar = document.querySelector("#staminaBar");
-const attack = document.querySelector("#attack");
 
 // appends
-box.append(player.getElement(), chaser.getElement(), chaser2.getElement());
+box.append(chaser.getElement(), chaser2.getElement());
+player.addToBox(box);
 
 let keysPressed = {};
 let health = 100;
@@ -57,28 +57,9 @@ const updatePosition = (isInit = false) => {
 
   player.onKeysPressed(keysPressed);
 
-  // attack stuff
-  if (keysPressed[" "]) {
-    attack.style.opacity = 1;
-    //show circle
-  } else {
-    attack.style.opacity = 0;
-    //make invisible
-  }
-
   player.draw();
 
   const [left, bottom] = player.getPosition();
-
-  moveToCenter(sprite, attack, left, bottom);
-
-  const isEnemyHit =
-    areCircleAndSquareColliding(attack, chaser.getElement()) && attack.style.opacity === "1";
-  if (isEnemyHit) {
-    attack.style.borderColor = "blue";
-  } else {
-    attack.style.borderColor = "wheat";
-  }
 
   // Update chaser position based on player's position
   chaser.updateChaserPosition(player.getPosition());
