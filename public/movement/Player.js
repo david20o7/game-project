@@ -5,11 +5,13 @@ export class Player extends Entity {
   // defines some inits
 
   attack = new AreaAttack();
+
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [400, 400],
       size: 25,
       color: [233, 180, 194],
+
       elementId: "player",
       speedMultiplier: 2,
       ...initialState,
@@ -34,7 +36,9 @@ export class Player extends Entity {
       down = true;
     }
 
-    this.attack.showOrHide(keysPressed[" "]);
+    if (keysPressed[" "]) {
+      this.attack.doAttack();
+    }
 
     const position = this.move(left, right, up, down);
 
@@ -49,4 +53,11 @@ export class Player extends Entity {
   addToBox(box) {
     box.append(this.element, this.attack.element);
   }
+
+  // box is different than the box above ^
+  addStaminaToBox(box) {
+    box.append(this.stamina.element);
+  }
 }
+
+class Stamina {}
