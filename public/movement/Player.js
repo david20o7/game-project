@@ -1,19 +1,24 @@
 import { Entity } from "./Entity.js";
 import { AreaAttack } from "./AreaAttack.js";
+import { clamp } from "./utilities.js";
+import { Stamina } from "./Stamina.js";
 
 export class Player extends Entity {
   // defines some inits
 
   attack = new AreaAttack();
+  stamina = new Stamina();
 
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [400, 400],
       size: 25,
       color: [233, 180, 194],
-
       elementId: "player",
-      speedMultiplier: 2,
+      speed: 2,
+      walkingSpeed: 2,
+      sprintingSpeed: 7,
+
       ...initialState,
     });
 
@@ -40,14 +45,25 @@ export class Player extends Entity {
       this.attack.doAttack();
     }
 
-    const position = this.move(left, right, up, down);
+    this.sprint(keysPressed["Shift"] && Object.keys(keysPressed).length > 1);
 
+    const position = this.move(left, right, up, down);
     this.attack.updatePosition(position);
+  }
+
+  sprint(isSprinting) {
+    this.stamina.useStamina(isSprinting);
+    const canSprint = this.stamina.canUseStamina();
+
+    this.updateSpeed(
+      canSprint && isSprinting ? this.state.sprintingSpeed : this.state.walkingSpeed
+    );
   }
 
   draw() {
     super.draw();
     this.attack?.draw();
+    this.stamina?.draw();
   }
 
   addToBox(box) {
@@ -55,9 +71,7 @@ export class Player extends Entity {
   }
 
   // box is different than the box above ^
-  addStaminaToBox(box) {
-    box.append(this.stamina.element);
+  addPlayerStatsToBox(box) {
+    box.append(this.stamina.staminaContainer);
   }
 }
-
-class Stamina {}
