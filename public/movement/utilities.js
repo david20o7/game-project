@@ -7,8 +7,8 @@ export function checkCollision(entityOne, entityTwo) {
   if (
     entityOneBounds.left < entityTwoBounds.right &&
     entityOneBounds.right > entityTwoBounds.left &&
-    entityOneBounds.top < entityTwoBounds.bottom &&
-    entityOneBounds.bottom > entityTwoBounds.top
+    entityOneBounds.bottom < entityTwoBounds.top &&
+    entityOneBounds.top > entityTwoBounds.bottom
   ) {
     return true;
   } else {

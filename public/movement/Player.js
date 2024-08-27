@@ -69,6 +69,10 @@ export class Player extends Entity {
     );
   }
 
+  getHit() {
+    this.healthBar.takeDamage(1);
+  }
+
   draw() {
     super.draw();
     this.attack.draw();

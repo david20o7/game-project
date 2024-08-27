@@ -1,5 +1,6 @@
 import { Player } from "./Player.js";
 import { Chaser } from "./Chaser.js";
+import { checkCollision } from "./utilities.js";
 
 const box = document.querySelector("#box");
 
@@ -20,10 +21,45 @@ const chaser2 = new Chaser(arenaDims, {
 const chasers = [chaser, chaser2];
 
 // appends
-box.append(chaser.getElement(), chaser2.getElement());
+for (let i = 0; i < chasers.length; i++) {
+  const chaserSelect = chasers[i];
+  box.append(chaserSelect.getElement());
+}
 
 player.addToBox(box);
 player.addPlayerStatsToBox(playerStats);
+
+function getRandomEdge() {
+  const prob = Math.random();
+
+  if (prob < 0.25) {
+    // bottom
+    return [Math.random() * arenaDims[0], 0];
+  } else if (prob < 0.5) {
+    // left
+    return [0, Math.random() * arenaDims[1]];
+  } else if (prob < 0.75) {
+    //up
+    return [Math.random() * arenaDims[0], arenaDims[1]];
+  } else {
+    // right
+    return [arenaDims[0], Math.random() * arenaDims[1]];
+  }
+}
+
+function getRandomColour() {
+  return [Math.random() * 255, Math.random() * 255, Math.random() * 255];
+}
+
+function createChaser() {
+  const newChaser = new Chaser(arenaDims, {
+    speedMultiplier: 1.1,
+    color: getRandomColour(),
+    position: getRandomEdge(),
+  });
+  box.append(newChaser.getElement());
+  return newChaser;
+}
 
 let keysPressed = {};
 
@@ -37,8 +73,16 @@ const updatePosition = () => {
   for (let i = 0; i < chasers.length; i++) {
     const chaserSelect = chasers[i];
     chaserSelect.updateChaserPosition(player.getPosition());
-
     chaserSelect.draw();
+    const hasCollided = checkCollision(player, chaserSelect);
+
+    if (hasCollided) {
+      player.getHit();
+
+      chaserSelect.element.remove();
+      const newChaser = createChaser();
+      chasers.splice(i, 1, newChaser);
+    }
   }
 
   // checkCollision();
@@ -49,6 +93,11 @@ setInterval(() => {
 
   // runs at 60 frames per second
 }, 1000 / 60);
+
+setInterval(() => {
+  const newChaser = createChaser();
+  chasers.push(newChaser);
+}, 3000);
 
 const handleKeyDown = (e) => {
   keysPressed[e.key] = true;
