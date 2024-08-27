@@ -1,6 +1,7 @@
 import { clamp } from "./utilities.js";
 
 export class Entity {
+  hasInit = false;
   state = {
     elementId: undefined,
     position: [100, 100],
@@ -17,15 +18,15 @@ export class Entity {
     this.arena = arenaDims;
 
     this._updateEntityState(initialState);
-    this._initPlayer();
-    this.draw();
+    // this._initEntity();
+    // this.draw();
   }
 
   _updateEntityState(state) {
     Object.assign(this.state, state);
   }
 
-  _initPlayer() {
+  _initEntity() {
     this.element.setAttribute("id", this.state.elementId);
     this.element.style.setProperty("position", "absolute");
   }
@@ -41,6 +42,11 @@ export class Entity {
   }
 
   draw() {
+    if (!this.hasInit) {
+      this._initEntity();
+      this.hasInit = true;
+    }
+
     this._updateElementSize();
     this._drawElementPosition();
     this.element.style.setProperty("background-color", `rgb(${this.state.color.join(",")})`);
@@ -82,5 +88,13 @@ export class Entity {
 
   getPosition() {
     return this.state.position;
+  }
+  getBounds() {
+    return {
+      left: this.state.position[0] - this.state.size / 2,
+      right: this.state.position[0] + this.state.size / 2,
+      top: this.state.position[1] + this.state.size / 2,
+      bottom: this.state.position[1] - this.state.size / 2,
+    };
   }
 }

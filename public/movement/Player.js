@@ -1,13 +1,14 @@
 import { Entity } from "./Entity.js";
 import { AreaAttack } from "./AreaAttack.js";
-import { clamp } from "./utilities.js";
 import { Stamina } from "./Stamina.js";
+import { Health } from "./Health.js";
 
 export class Player extends Entity {
   // defines some inits
 
   attack = new AreaAttack();
   stamina = new Stamina();
+  healthBar;
 
   constructor(arenaDims, initialState) {
     super(arenaDims, {
@@ -23,6 +24,13 @@ export class Player extends Entity {
     });
 
     this.attack.updatePosition(this.state.position);
+
+    this.healthBar = new Health(100, this.state.size);
+  }
+
+  _initEntity() {
+    super._initEntity();
+    this.element.append(this.healthBar.healthContainer);
   }
 
   onKeysPressed(keysPressed) {
@@ -48,6 +56,7 @@ export class Player extends Entity {
     this.sprint(keysPressed["Shift"] && Object.keys(keysPressed).length > 1);
 
     const position = this.move(left, right, up, down);
+
     this.attack.updatePosition(position);
   }
 
@@ -62,8 +71,9 @@ export class Player extends Entity {
 
   draw() {
     super.draw();
-    this.attack?.draw();
-    this.stamina?.draw();
+    this.attack.draw();
+    this.stamina.draw();
+    this.healthBar.draw();
   }
 
   addToBox(box) {
