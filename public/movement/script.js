@@ -48,7 +48,23 @@ function getRandomEdge() {
 }
 
 function getRandomColour() {
-  return [Math.random() * 255, Math.random() * 255, Math.random() * 255];
+  let red = Math.random() * 255;
+  let green = Math.random() * 255;
+  let blue = Math.random() * 255;
+
+  // while (red || green || blue < 10) {
+  //   let red = Math.random() * 255;
+  //   let green = Math.random() * 255;
+  //   let blue = Math.random() * 255;
+  // }
+
+  let randomColour = [red, green, blue];
+
+  return randomColour;
+}
+
+function getRandomSize() {
+  return Math.random() * 30 + 10;
 }
 
 function createChaser() {
@@ -56,6 +72,7 @@ function createChaser() {
     speedMultiplier: 1.1,
     color: getRandomColour(),
     position: getRandomEdge(),
+    size: getRandomSize(),
   });
   box.append(newChaser.getElement());
   return newChaser;
@@ -84,8 +101,6 @@ const updatePosition = () => {
       chasers.splice(i, 1, newChaser);
     }
   }
-
-  // checkCollision();
 };
 
 setInterval(() => {
