@@ -70,7 +70,7 @@ export class Player extends Entity {
   }
 
   getHit() {
-    this.healthBar.takeDamage(1);
+    this.healthBar.takeDamage(5);
   }
 
   draw() {

@@ -9,15 +9,6 @@ const playerStats = document.querySelector("#playerStats");
 const arenaDims = [box.clientWidth, box.clientHeight];
 
 const player = new Player(arenaDims);
-
-const chaser = new Chaser(arenaDims);
-
-const chaser2 = new Chaser(arenaDims, {
-  speedMultiplier: 1.1,
-  color: [255, 0, 0],
-  position: [100, 800],
-});
-
 const chasers = [];
 
 // appends
@@ -42,7 +33,7 @@ function getRandomEdge() {
     //up
     return [Math.random() * arenaDims[0], arenaDims[1]];
   } else {
-    // right
+    // righ
     return [arenaDims[0], Math.random() * arenaDims[1]];
   }
 }
@@ -61,7 +52,7 @@ function getRandomColour() {
     red += remainder;
     green += remainder;
     blue += remainder;
-    rbg = red + green + blue;
+    rgb = red + green + blue;
   }
 
   let randomColour = [red, green, blue];
@@ -88,9 +79,7 @@ let keysPressed = {};
 
 const updatePosition = () => {
   player.updateSpeed(2);
-
   player.onKeysPressed(keysPressed);
-
   player.draw();
 
   for (let i = 0; i < chasers.length; i++) {
@@ -101,10 +90,8 @@ const updatePosition = () => {
 
     if (hasCollided) {
       player.getHit();
-
       chaserSelect.element.remove();
-      const newChaser = createChaser();
-      chasers.splice(i, 1, newChaser);
+      chasers.splice(i, 1);
     }
   }
 };
@@ -115,10 +102,21 @@ setInterval(() => {
   // runs at 60 frames per second
 }, 1000 / 60);
 
-setInterval(() => {
-  const newChaser = createChaser();
-  chasers.push(newChaser);
-}, 3000);
+function addNewChaser(time) {
+  setTimeout(() => {
+    const newChaser = createChaser();
+    chasers.push(newChaser);
+
+    const newTime = time - 100;
+    if (newTime > 1500) {
+      addNewChaser(newTime);
+    } else {
+      addNewChaser(time);
+    }
+  }, time);
+}
+
+addNewChaser(3000);
 
 const handleKeyDown = (e) => {
   keysPressed[e.key] = true;
