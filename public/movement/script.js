@@ -18,7 +18,7 @@ const chaser2 = new Chaser(arenaDims, {
   position: [100, 800],
 });
 
-const chasers = [chaser, chaser2];
+const chasers = [];
 
 // appends
 for (let i = 0; i < chasers.length; i++) {
@@ -52,11 +52,17 @@ function getRandomColour() {
   let green = Math.random() * 255;
   let blue = Math.random() * 255;
 
-  // while (red || green || blue < 10) {
-  //   let red = Math.random() * 255;
-  //   let green = Math.random() * 255;
-  //   let blue = Math.random() * 255;
-  // }
+  let rgb = red + green + blue;
+
+  if (rgb < 100) {
+    let remainder = 100 - rgb;
+    remainder = remainder / 3;
+    remainder = Math.round(remainder);
+    red += remainder;
+    green += remainder;
+    blue += remainder;
+    rbg = red + green + blue;
+  }
 
   let randomColour = [red, green, blue];
 
