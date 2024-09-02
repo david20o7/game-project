@@ -89,6 +89,14 @@ export class Entity {
   getPosition() {
     return this.state.position;
   }
+
+  /**
+   *
+   * ________
+   * |      |
+   * |  X   |
+   * |______|
+   */
   getBounds() {
     return {
       left: this.state.position[0] - this.state.size / 2,

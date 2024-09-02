@@ -1,7 +1,7 @@
 import { Entity } from "./Entity.js";
 import { AreaAttack } from "./AreaAttack.js";
 import { Stamina } from "./Stamina.js";
-import { Health } from "./Health.js";
+import { HealthBar } from "./HealthBar.js";
 
 export class Player extends Entity {
   // defines some inits
@@ -25,7 +25,7 @@ export class Player extends Entity {
 
     this.attack.updatePosition(this.state.position);
 
-    this.healthBar = new Health(100, this.state.size);
+    this.healthBar = new HealthBar(100, this.state.size);
   }
 
   _initEntity() {

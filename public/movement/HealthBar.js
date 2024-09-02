@@ -1,6 +1,4 @@
-export class Health {
-  static name = "Health";
-
+export class HealthBar {
   health;
   maxHealth;
   healthBarHeight = 3;

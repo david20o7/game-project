@@ -1,6 +1,13 @@
 import { Player } from "./Player.js";
 import { Chaser } from "./Chaser.js";
-import { checkCollision, getRandomEdge, getRandomColour } from "./utilities.js";
+import {
+  checkCollision,
+  getRandomEdge,
+  getRandomColour,
+  getSpeedFromSize,
+  getRandomSize,
+  areCircleAndSquareColliding,
+} from "./utilities.js";
 
 const box = document.querySelector("#box");
 
@@ -21,36 +28,12 @@ for (let i = 0; i < chasers.length; i++) {
 player.addToBox(box);
 player.addPlayerStatsToBox(playerStats);
 
-const SPEED_OFFSET = 10;
-const SPEED_RANGE = 30;
-function getRandomSize() {
-  return Math.random() * SPEED_RANGE + SPEED_OFFSET;
-}
-
-// function getSpeedFromSize(size) {
-//   const speed = (size + 55) / -15;
-//   console.log(size, speed);
-//   return speed * -1;
-// }
-
 function createChaser() {
   const chaserSize = getRandomSize();
 
-  //  speed-10 / 30 =  1
-
-  // 10 / 40 = 1/4
-
-  // if (chaserSize <= 19) {
-  //   speedIncrease = 3;
-  // } else if (chaserSize >= 20 || chaserSize < 30) {
-  //   speedIncrease = 1.5;
-  // } else {
-  //   speedIncrease = 0.7;
-  // }
-
-  const speedIncrease = 1 + getTimeDifference() / 100000;
-  // const speedIncrease = 1;
-  console.log(speedIncrease);
+  const newSpeed = getSpeedFromSize(chaserSize);
+  const speedDifficultyIncrease = getTimeFromGameStart() / 200000;
+  const speedIncrease = newSpeed + speedDifficultyIncrease;
 
   const newChaser = new Chaser(arenaDims, {
     speed: speedIncrease,
@@ -92,33 +75,44 @@ window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
 
 const timeAtGameStart = performance.now();
-function getTimeDifference() {
+
+function getTimeFromGameStart() {
   return performance.now() - timeAtGameStart;
 }
 
 // Main Game Loop
 setInterval(() => {
-  player.updateSpeed(2);
   player.onKeysPressed(keysPressed);
   player.draw();
 
   // loop for drawing chasers
   for (let i = 0; i < chasers.length; i++) {
-    const chaserSelect = chasers[i];
-    chaserSelect.updateChaserPosition(player.getPosition());
-    chaserSelect.draw();
+    const selectedChaser = chasers[i];
+    selectedChaser.updateChaserPosition(player.getPosition());
+    selectedChaser.draw();
 
     // collision detection
-    const hasCollided = checkCollision(player, chaserSelect);
+    const chaserCollidedWithPlayer = checkCollision(player, selectedChaser);
 
-    if (hasCollided) {
+    if (chaserCollidedWithPlayer) {
       player.getHit();
-      chaserSelect.element.remove();
-      chasers.splice(i, 1);
+      // selectedChaser.element.remove();
+      // chasers.splice(i, 1);
 
-      showEmoji(player.getPosition());
+      // showEmoji(player.getPosition());
+    }
+
+    let hitByAttack = areCircleAndSquareColliding(player.attack, selectedChaser);
+
+    if (hitByAttack) {
+      selectedChaser.getHit();
+      if (selectedChaser.chaserDead()) {
+        selectedChaser.element.remove();
+        chasers.splice(i, 1);
+      }
     }
   }
+
   // runs at 60 frames per second
 }, 1000 / 60);
 

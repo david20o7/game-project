@@ -16,6 +16,36 @@ export function checkCollision(entityOne, entityTwo) {
   }
 }
 
+// not using this right now
+export function areCircleAndSquareColliding(circleElement, squareElement) {
+  // Get the bounding rectangles for both elements
+  const circleDimensions = circleElement.getCircle();
+  const squareElementBounds = squareElement.getBounds();
+
+  // Calculate the circle's center and radius
+  const circleRadius = circleDimensions.radius;
+  const circleCenterX = circleDimensions.center[0];
+  const circleCenterY = circleDimensions.center[1];
+
+  // Find the closest point on the square to the circle's center
+  const closestX = Math.max(
+    squareElementBounds.left,
+    Math.min(circleCenterX, squareElementBounds.right)
+  );
+  const closestY = Math.max(
+    squareElementBounds.top,
+    Math.min(circleCenterY, squareElementBounds.bottom)
+  );
+
+  // Calculate the distance from the closest point to the circle's center
+  const distanceX = circleCenterX - closestX;
+  const distanceY = circleCenterY - closestY;
+
+  // Determine if the distance is less than the circle's radius
+  const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+  return distanceSquared < circleRadius * circleRadius;
+}
+
 export function getRandomEdge(arenaDims) {
   const prob = Math.random();
 
@@ -56,26 +86,13 @@ export function getRandomColour() {
   return randomColour;
 }
 
-// not using this right now
-function areCircleAndSquareColliding(circleElement, squareElement) {
-  // Get the bounding rectangles for both elements
-  const circleRect = circleElement.getBoundingClientRect();
-  const squareRect = squareElement.getBoundingClientRect();
+// y = mx + c
+export function getSpeedFromSize(size) {
+  return -0.05 * size + 3;
+}
 
-  // Calculate the circle's center and radius
-  const circleRadius = circleRect.width / 2;
-  const circleCenterX = circleRect.left + circleRadius;
-  const circleCenterY = circleRect.top + circleRadius;
-
-  // Find the closest point on the square to the circle's center
-  const closestX = Math.max(squareRect.left, Math.min(circleCenterX, squareRect.right));
-  const closestY = Math.max(squareRect.top, Math.min(circleCenterY, squareRect.bottom));
-
-  // Calculate the distance from the closest point to the circle's center
-  const distanceX = circleCenterX - closestX;
-  const distanceY = circleCenterY - closestY;
-
-  // Determine if the distance is less than the circle's radius
-  const distanceSquared = distanceX * distanceX + distanceY * distanceY;
-  return distanceSquared < circleRadius * circleRadius;
+export function getRandomSize() {
+  const SPEED_OFFSET = 10;
+  const SPEED_RANGE = 30;
+  return Math.random() * SPEED_RANGE + SPEED_OFFSET;
 }

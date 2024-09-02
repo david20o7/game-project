@@ -8,7 +8,7 @@ export class AreaAttack {
     borderColor: [255, 255, 255],
     opacity: 1,
 
-    maxRadius: 70,
+    maxRadius: 120,
 
     expandSpeed: 0.05,
     attacking: false,
@@ -78,5 +78,12 @@ export class AreaAttack {
 
   updatePosition(newPosition) {
     this.state.position = newPosition;
+  }
+
+  getCircle() {
+    return {
+      center: this.state.position,
+      radius: this.state.radius,
+    };
   }
 }

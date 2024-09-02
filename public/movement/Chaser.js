@@ -1,7 +1,9 @@
 import { Entity } from "./Entity.js";
-import { Health } from "./Health.js";
+import { HealthBar } from "./HealthBar.js";
 
 export class Chaser extends Entity {
+  hasImmunity = false;
+
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [100, 100],
@@ -12,7 +14,7 @@ export class Chaser extends Entity {
       ...initialState,
     });
 
-    this.healthBar = new Health(50, this.state.size);
+    this.healthBar = new HealthBar(50, this.state.size);
   }
 
   _initEntity() {
@@ -41,8 +43,20 @@ export class Chaser extends Entity {
     this.move(left, right, up, down);
   }
 
+  chaserDead() {
+    return this.healthBar.health <= 0;
+  }
+
   getHit() {
-    this.healthBar.takeDamage(5);
+    if (this.hasImmunity === false) {
+      this.healthBar.takeDamage(25);
+
+      setTimeout(() => {
+        this.hasImmunity = false;
+      }, 500);
+
+      this.hasImmunity = true;
+    }
   }
 
   draw() {
