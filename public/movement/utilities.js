@@ -16,6 +16,46 @@ export function checkCollision(entityOne, entityTwo) {
   }
 }
 
+export function getRandomEdge(arenaDims) {
+  const prob = Math.random();
+
+  if (prob < 0.25) {
+    // bottom
+    return [Math.random() * arenaDims[0], 0];
+  } else if (prob < 0.5) {
+    // left
+    return [0, Math.random() * arenaDims[1]];
+  } else if (prob < 0.75) {
+    // up
+    return [Math.random() * arenaDims[0], arenaDims[1]];
+  } else {
+    // right
+    return [arenaDims[0], Math.random() * arenaDims[1]];
+  }
+}
+
+export function getRandomColour() {
+  let red = Math.random() * 255;
+  let green = Math.random() * 255;
+  let blue = Math.random() * 255;
+
+  let rgb = red + green + blue;
+
+  if (rgb < 100) {
+    let remainder = 100 - rgb;
+    remainder = remainder / 3;
+    remainder = Math.round(remainder);
+    red += remainder;
+    green += remainder;
+    blue += remainder;
+    rgb = red + green + blue;
+  }
+
+  let randomColour = [red, green, blue];
+
+  return randomColour;
+}
+
 // not using this right now
 function areCircleAndSquareColliding(circleElement, squareElement) {
   // Get the bounding rectangles for both elements

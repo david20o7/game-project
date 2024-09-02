@@ -18,8 +18,8 @@ body {
 
 #box {
   border: 2px solid rgb(99, 99, 99);
-  width: 600px;
-  height: 600px;
+  width: 1200px;
+  height: 1000px;
   display: flex;
   justify-content: center;
   align-items: center;

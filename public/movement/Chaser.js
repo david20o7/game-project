@@ -1,4 +1,5 @@
 import { Entity } from "./Entity.js";
+import { Health } from "./Health.js";
 
 export class Chaser extends Entity {
   constructor(arenaDims, initialState) {
@@ -7,9 +8,16 @@ export class Chaser extends Entity {
       size: 15,
       color: [114, 50, 4],
       elementId: "chaser",
-      speedMultiplier: 1,
+      speed: 1,
       ...initialState,
     });
+
+    this.healthBar = new Health(50, this.state.size);
+  }
+
+  _initEntity() {
+    super._initEntity();
+    this.element.append(this.healthBar.healthContainer);
   }
 
   updateChaserPosition(playerPosition) {
@@ -31,5 +39,14 @@ export class Chaser extends Entity {
     }
 
     this.move(left, right, up, down);
+  }
+
+  getHit() {
+    this.healthBar.takeDamage(5);
+  }
+
+  draw() {
+    super.draw();
+    this.healthBar.draw();
   }
 }
