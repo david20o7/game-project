@@ -47,6 +47,7 @@ export class Chaser extends Entity {
     return this.healthBar.health <= 0;
   }
 
+  // gives immunity to chaser for 0.5s every time it is hit
   getHit() {
     if (this.hasImmunity === false) {
       this.healthBar.takeDamage(25);

@@ -9,7 +9,7 @@ export class Player extends Entity {
   attack = new AreaAttack();
   stamina = new Stamina();
   healthBar;
-
+  // objects that define the player
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [400, 400],
@@ -33,6 +33,7 @@ export class Player extends Entity {
     this.element.append(this.healthBar.healthContainer);
   }
 
+  // movement logic
   onKeysPressed(keysPressed) {
     let [left, right, up, down] = [false, false, false, false];
 
@@ -48,7 +49,7 @@ export class Player extends Entity {
     if (keysPressed["ArrowDown"] || keysPressed["s"] || keysPressed["S"]) {
       down = true;
     }
-
+    // attack logic
     if (keysPressed[" "]) {
       this.attack.doAttack();
     }
@@ -59,7 +60,8 @@ export class Player extends Entity {
 
     this.attack.updatePosition(position);
   }
-
+  // if user is sprinting and has enough stamina, the speed is set to sprinting speed
+  // otherwise, the speed is set to walking speed.
   sprint(isSprinting) {
     this.stamina.useStamina(isSprinting);
     const canSprint = this.stamina.canUseStamina();
@@ -84,7 +86,7 @@ export class Player extends Entity {
     box.append(this.element, this.attack.element);
   }
 
-  // box is different than the box above ^
+  // box is different than the box above ^ (stamina box)
   addPlayerStatsToBox(box) {
     box.append(this.stamina.staminaContainer);
   }

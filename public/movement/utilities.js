@@ -1,3 +1,4 @@
+// clam makes sure that everything is within the box
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 export function checkCollision(entityOne, entityTwo) {
@@ -64,13 +65,14 @@ export function getRandomEdge(arenaDims) {
   }
 }
 
+// gives each sprite a random colour when it spawns.
 export function getRandomColour() {
   let red = Math.random() * 255;
   let green = Math.random() * 255;
   let blue = Math.random() * 255;
 
   let rgb = red + green + blue;
-
+  // increases the rgb of the colour if it is too dark
   if (rgb < 100) {
     let remainder = 100 - rgb;
     remainder = remainder / 3;
@@ -87,10 +89,11 @@ export function getRandomColour() {
 }
 
 // y = mx + c
+// assigns a speed compared to its size
 export function getSpeedFromSize(size) {
   return -0.05 * size + 3;
 }
-
+// gets a random size in between 10 and 40.
 export function getRandomSize() {
   const SPEED_OFFSET = 10;
   const SPEED_RANGE = 30;

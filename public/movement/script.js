@@ -46,9 +46,9 @@ function createChaser() {
 
   return newChaser;
 }
-
+// when chaser die, show emoji
 function showEmoji(position) {
-  emoji.innerText = "🦆";
+  emoji.innerText = "💥";
   emoji.style.position = "absolute";
   emoji.style.fontSize = "24px";
   emoji.style.left = position[0] + "px";
@@ -115,6 +115,8 @@ setInterval(() => {
 
   // runs at 60 frames per second
 }, 1000 / 60);
+
+// add a new chaser every time-100 seconds until there are 1500 seconds left
 
 function addNewChaser(time) {
   setTimeout(() => {

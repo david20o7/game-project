@@ -1,5 +1,5 @@
 import { clamp } from "./utilities.js";
-
+// creates objects that describe the areaAttack
 export class AreaAttack {
   state = {
     elementId: undefined,
@@ -21,7 +21,7 @@ export class AreaAttack {
     this.updateInitialState(initialState);
     this.initializeAttack();
   }
-
+  // slowly expands the attack of the player until it reaches the maximum radius.
   attackExpand() {
     if (this.state.attacking) {
       this.state.expand += this.state.expandSpeed;

@@ -14,6 +14,8 @@ export class Stamina {
     this.initElements();
   }
 
+  // display stamina elements
+
   initElements() {
     this.staminaContainer.style.setProperty("height", "30px");
     this.staminaContainer.style.setProperty("width", "120px");
@@ -25,7 +27,8 @@ export class Stamina {
 
     this.staminaContainer.append(this.staminaBar);
   }
-
+  /*if stamina is used until stamina = 0, there will be a stamina lock for 1 second meaning the player will not be able to use the 
+ stamina until it is above 50 */
   manageStaminaLock() {
     if (this.stamina === 0) {
       if (!this.staminaLock) {
@@ -42,6 +45,8 @@ export class Stamina {
       this.staminaLock = false;
     }
   }
+
+  // changes the gradient of the stamina from green to red
 
   updateStaminaColor() {
     const greenValue = this.stamina * 2.5;
@@ -69,15 +74,11 @@ export class Stamina {
   canUseStamina() {
     return !this.staminaLock;
   }
+  // displays stamina
 
   draw() {
     this.updateStaminaColor();
     this.staminaBar.style.setProperty("width", this.stamina + "%");
-    // if (this.stamina < 50) {
-    //   this.staminaBar.style.setProperty("background-color", "orange");
-    // } else {
-    //   this.staminaBar.style.setProperty("background-color", "green");
-    // }
 
     this.staminaBar.style.setProperty("background-color", this.staminaBarColor);
   }

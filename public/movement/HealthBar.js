@@ -28,15 +28,15 @@ export class HealthBar {
 
     this.healthContainer.append(this.healthBar);
   }
-
+  // the health decreases
   takeDamage(damage) {
     this.health = this.health - damage;
   }
-
+  // calculates the percentage of the new health
   healthPercentage() {
     return (this.health / this.maxHealth) * 100;
   }
-
+  // displays health bar above player with a percentage of the width
   draw() {
     this.healthBar.style.setProperty("width", this.healthPercentage() + "%");
   }
