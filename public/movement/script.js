@@ -1,6 +1,6 @@
 import { Player } from "./Player.js";
 import { Chaser } from "./Chaser.js";
-import { Score } from "./score.js";
+import { Score } from "./Score.js";
 import {
   checkCollision,
   getRandomEdge,
@@ -15,21 +15,29 @@ const box = document.querySelector("#box");
 const playerStats = document.querySelector("#playerStats");
 
 const arenaDims = [box.clientWidth, box.clientHeight];
-const emoji = document.createElement("div");
 
 const player = new Player(arenaDims);
 const score = new Score();
 const chasers = [];
 
-// appends
-for (let i = 0; i < chasers.length; i++) {
-  const chaserSelect = chasers[i];
-  box.append(chaserSelect.getElement());
-}
-
 player.addToBox(box);
 player.addPlayerStatsToBox(playerStats);
 
+// keeping track of game time
+const timeAtGameStart = performance.now();
+
+function getTimeFromGameStart() {
+  return performance.now() - timeAtGameStart;
+}
+//
+
+/**
+ * - creates a chaser of a random size
+ * - gives the chaser a speed inversely proportional to its size
+ * - chaser speed then adjusted for difficulty
+ * - random color also selected for chaser
+ * - chaser placed somewhere on the edge of the play area
+ */
 function createChaser() {
   const chaserSize = getRandomSize();
 
@@ -45,24 +53,10 @@ function createChaser() {
   });
 
   box.append(newChaser.getElement());
-
   return newChaser;
 }
-// when chaser die, show emoji
-function showEmoji(position) {
-  emoji.innerText = "💥";
-  emoji.style.position = "absolute";
-  emoji.style.fontSize = "24px";
-  emoji.style.left = position[0] + "px";
-  emoji.style.bottom = position[1] + "px";
 
-  box.append(emoji);
-
-  setTimeout(() => {
-    emoji.remove();
-  }, 1000);
-}
-
+// key pressed handlers
 let keysPressed = {};
 
 const handleKeyDown = (e) => {
@@ -72,15 +66,30 @@ const handleKeyDown = (e) => {
 const handleKeyUp = (e) => {
   delete keysPressed[e.key];
 };
-
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
+//
 
-const timeAtGameStart = performance.now();
+// add a new chaser every time-100 seconds until there are 1500 seconds left
 
-function getTimeFromGameStart() {
-  return performance.now() - timeAtGameStart;
+/**
+ * Adds new chasers, increasing the interval at which they're added
+ * as time goes on.
+ */
+function addNewChaser(time) {
+  setTimeout(() => {
+    const newChaser = createChaser();
+    chasers.push(newChaser);
+
+    const newTime = time - 100;
+    if (newTime > 1500) {
+      addNewChaser(newTime);
+    } else {
+      addNewChaser(time);
+    }
+  }, time);
 }
+//
 
 // Main Game Loop
 setInterval(() => {
@@ -100,8 +109,6 @@ setInterval(() => {
       player.getHit();
       // selectedChaser.element.remove();
       // chasers.splice(i, 1);
-
-      // showEmoji(player.getPosition());
     }
 
     let hitByAttack = areCircleAndSquareColliding(player.attack, selectedChaser);
@@ -118,21 +125,6 @@ setInterval(() => {
 
   // runs at 60 frames per second
 }, 1000 / 60);
-
-// add a new chaser every time-100 seconds until there are 1500 seconds left
-
-function addNewChaser(time) {
-  setTimeout(() => {
-    const newChaser = createChaser();
-    chasers.push(newChaser);
-
-    const newTime = time - 100;
-    if (newTime > 1500) {
-      addNewChaser(newTime);
-    } else {
-      addNewChaser(time);
-    }
-  }, time);
-}
+//
 
 addNewChaser(3000);

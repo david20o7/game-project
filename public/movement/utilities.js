@@ -1,6 +1,13 @@
-// clam makes sure that everything is within the box
+/**
+ * ensures that the number cannot be smaller than min,
+ * but cannot be larger than max
+ */
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
+/**
+ * checks collisions between two entities
+ * and returns true if they collide
+ */
 export function checkCollision(entityOne, entityTwo) {
   const entityOneBounds = entityOne.getBounds();
   const entityTwoBounds = entityTwo.getBounds();
@@ -17,7 +24,10 @@ export function checkCollision(entityOne, entityTwo) {
   }
 }
 
-// not using this right now
+/**
+ * Fancy function which checks whether a circle and a square intersect
+ * Used to determine whether an attack hits for now.
+ */
 export function areCircleAndSquareColliding(circleElement, squareElement) {
   // Get the bounding rectangles for both elements
   const circleDimensions = circleElement.getCircle();
@@ -47,6 +57,9 @@ export function areCircleAndSquareColliding(circleElement, squareElement) {
   return distanceSquared < circleRadius * circleRadius;
 }
 
+/**
+ * Gets a random edge of the box.
+ */
 export function getRandomEdge(arenaDims) {
   const prob = Math.random();
 
@@ -65,7 +78,10 @@ export function getRandomEdge(arenaDims) {
   }
 }
 
-// gives each sprite a random colour when it spawns.
+/**
+ * Generates a random colour, but makes sure it's at least 100 units bright
+ * used for generating chaser colours as they spawn.
+ */
 export function getRandomColour() {
   let red = Math.random() * 255;
   let green = Math.random() * 255;

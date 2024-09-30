@@ -1,7 +1,7 @@
 export class Score {
   constructor() {
     this.currentScore = 0;
-    this.highestScore = 0; // Initialize highest score
+    this.highestScore = 0;
     this.scoreElement = document.createElement("div");
     this.scoreElement.style.position = "absolute";
     this.scoreElement.style.top = "10px";
@@ -11,6 +11,7 @@ export class Score {
     this.updateScoreDisplay();
     document.body.append(this.scoreElement);
   }
+
   // when we store highest score
   incrementScore(amount) {
     this.currentScore += amount;

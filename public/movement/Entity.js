@@ -78,6 +78,7 @@ export class Entity {
     const newY = clamp(this.state.position[1] + newSpeed[1], halfSize, this.arena[1] - halfSize);
 
     const newPosition = [newX, newY];
+
     this._updateEntityState({ position: newPosition });
     return newPosition;
   }

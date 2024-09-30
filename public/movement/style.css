@@ -7,21 +7,11 @@ body {
   background-color: black;
   flex-direction: column;
 }
-/* 
-#healthBar,
-#staminaBar {
-  color: white;
-  font-size: 18px;
-  margin-bottom: 5px;
-  text-align: center;
-} */
 
 #box {
   border: 2px solid rgb(99, 99, 99);
-  width: 1200px;
-  height: 1000px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 800px;
+  height: 700px;
   position: relative;
+  overflow: hidden;
 }
