@@ -5,6 +5,7 @@ import { HealthBar } from "./HealthBar.js";
 
 export class Player extends Entity {
   // defines some inits
+  hasImmunity = false;
 
   attack = new AreaAttack();
   stamina = new Stamina();
@@ -72,7 +73,15 @@ export class Player extends Entity {
   }
 
   getHit() {
-    this.healthBar.takeDamage(5);
+    if (this.hasImmunity === false) {
+      this.healthBar.takeDamage(25);
+
+      setTimeout(() => {
+        this.hasImmunity = false;
+      }, 2000);
+
+      this.hasImmunity = true;
+    }
   }
 
   draw() {

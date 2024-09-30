@@ -1,5 +1,6 @@
 import { Player } from "./Player.js";
 import { Chaser } from "./Chaser.js";
+import { Score } from "./score.js";
 import {
   checkCollision,
   getRandomEdge,
@@ -17,6 +18,7 @@ const arenaDims = [box.clientWidth, box.clientHeight];
 const emoji = document.createElement("div");
 
 const player = new Player(arenaDims);
+const score = new Score();
 const chasers = [];
 
 // appends
@@ -109,6 +111,7 @@ setInterval(() => {
       if (selectedChaser.chaserDead()) {
         selectedChaser.element.remove();
         chasers.splice(i, 1);
+        score.incrementScore(5); // Increment score by 5 when chaser is dead
       }
     }
   }
