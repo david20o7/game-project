@@ -1,144 +1,130 @@
-const sprite = document.querySelector("#sprite");
-const chaser = document.querySelector("#chaser");
+import { Player } from "./Player.js";
+import { Chaser } from "./Chaser.js";
+import { Score } from "./Score.js";
+import {
+  checkCollision,
+  getRandomEdge,
+  getRandomColour,
+  getSpeedFromSize,
+  getRandomSize,
+  areCircleAndSquareColliding,
+} from "./utilities.js";
+
 const box = document.querySelector("#box");
-const healthDisplay = document.querySelector("#healthCount");
-const staminaCount = document.querySelector("#staminaCount");
-const staminaBar = document.querySelector("#staminaBar");
 
-let speed = 2;
-let chaserSpeed = 1;
+const playerStats = document.querySelector("#playerStats");
+
+const arenaDims = [box.clientWidth, box.clientHeight];
+
+const player = new Player(arenaDims);
+const score = new Score();
+const chasers = [];
+
+player.addToBox(box);
+player.addPlayerStatsToBox(playerStats);
+
+// keeping track of game time
+const timeAtGameStart = performance.now();
+
+function getTimeFromGameStart() {
+  return performance.now() - timeAtGameStart;
+}
+//
+
+/**
+ * - creates a chaser of a random size
+ * - gives the chaser a speed inversely proportional to its size
+ * - chaser speed then adjusted for difficulty
+ * - random color also selected for chaser
+ * - chaser placed somewhere on the edge of the play area
+ */
+function createChaser() {
+  const chaserSize = getRandomSize();
+
+  const newSpeed = getSpeedFromSize(chaserSize);
+  const speedDifficultyIncrease = getTimeFromGameStart() / 200000;
+  const speedIncrease = newSpeed + speedDifficultyIncrease;
+
+  const newChaser = new Chaser(arenaDims, {
+    speed: speedIncrease,
+    color: getRandomColour(),
+    position: getRandomEdge(arenaDims),
+    size: chaserSize,
+  });
+
+  box.append(newChaser.getElement());
+  return newChaser;
+}
+
+// key pressed handlers
 let keysPressed = {};
-let health = 100;
-let stamina = 100;
-let staminaLock = false;
-
-const toNum = (pxVal) => parseInt(pxVal, 10) || 0;
-
-const updatePosition = (isInit = false) => {
-  let left = 0;
-  let bottom = 0;
-
-  if (isInit) {
-    const style = window.getComputedStyle(sprite);
-    left = toNum(style.left);
-    bottom = toNum(style.bottom);
-  } else {
-    left = toNum(sprite.style.left);
-    bottom = toNum(sprite.style.bottom);
-  }
-
-  let currentSpeed = speed;
-
-  if (keysPressed["Control"] && staminaLock === false) {
-    currentSpeed = 7;
-    stamina = Math.max(stamina - 1, 0);
-    if (stamina <= 1) {
-      staminaLock = true;
-    }
-  } else {
-    stamina = Math.min(stamina + 1, 100);
-    if (stamina >= 50) {
-      staminaLock = false;
-    }
-  }
-
-  changeStaminaDisplay(stamina);
-
-  if (keysPressed["ArrowLeft"]) {
-    left = Math.max(left - currentSpeed, 0);
-  }
-  if (keysPressed["ArrowRight"]) {
-    left = Math.min(left + currentSpeed, box.clientWidth - sprite.clientWidth);
-  }
-  if (keysPressed["ArrowUp"]) {
-    bottom = Math.min(
-      bottom + currentSpeed,
-      box.clientHeight - sprite.clientHeight
-    );
-  }
-  if (keysPressed["ArrowDown"]) {
-    bottom = Math.max(bottom - currentSpeed, 0);
-  }
-
-  sprite.style.left = left + "px";
-  sprite.style.bottom = bottom + "px";
-
-  updateChaserPosition(left, bottom);
-  checkCollision();
-};
-
-const updateChaserPosition = (spriteLeft, spriteBottom) => {
-  let chaserLeft = toNum(chaser.style.left);
-  let chaserBottom = toNum(chaser.style.bottom);
-
-  if (chaserLeft < spriteLeft) {
-    chaserLeft = Math.min(chaserLeft + chaserSpeed, spriteLeft);
-  } else if (chaserLeft > spriteLeft) {
-    chaserLeft = Math.max(chaserLeft - chaserSpeed, spriteLeft);
-  }
-
-  if (chaserBottom < spriteBottom) {
-    chaserBottom = Math.min(chaserBottom + chaserSpeed, spriteBottom);
-  } else if (chaserBottom > spriteBottom) {
-    chaserBottom = Math.max(chaserBottom - chaserSpeed, spriteBottom);
-  }
-
-  chaser.style.left = chaserLeft + "px";
-  chaser.style.bottom = chaserBottom + "px";
-};
-
-const checkCollision = () => {
-  const spriteRect = sprite.getBoundingClientRect();
-  const chaserRect = chaser.getBoundingClientRect();
-
-  if (
-    spriteRect.left < chaserRect.right &&
-    spriteRect.right > chaserRect.left &&
-    spriteRect.top < chaserRect.bottom &&
-    spriteRect.bottom > chaserRect.top
-  ) {
-    reduceHealthDisplay(1);
-  }
-};
-
-const reduceHealthDisplay = (amount) => {
-  health = Math.max(health - amount, 0);
-  healthDisplay.textContent = health;
-};
-
-const changeStaminaDisplay = (amount) => {
-  staminaCount.textContent = amount;
-  staminaBar.style.color = staminaLock === true ? "orange" : "green";
-};
-
-const resetGame = () => {
-  healthDisplay.textContent = 100;
-  staminaCount.textContent = 100;
-  sprite.style.left = "0px";
-  sprite.style.bottom = "0px";
-  chaser.style.left = box.clientWidth - chaser.clientWidth + "px";
-  chaser.style.bottom = box.clientHeight - chaser.clientHeight + "px";
-};
 
 const handleKeyDown = (e) => {
   keysPressed[e.key] = true;
 };
 
 const handleKeyUp = (e) => {
-  keysPressed[e.key] = false;
+  delete keysPressed[e.key];
 };
-
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
+//
 
-let first = true;
+// add a new chaser every time-100 seconds until there are 1500 seconds left
 
+/**
+ * Adds new chasers, increasing the interval at which they're added
+ * as time goes on.
+ */
+function addNewChaser(time) {
+  setTimeout(() => {
+    const newChaser = createChaser();
+    chasers.push(newChaser);
+
+    const newTime = time - 100;
+    if (newTime > 1500) {
+      addNewChaser(newTime);
+    } else {
+      addNewChaser(time);
+    }
+  }, time);
+}
+//
+
+// Main Game Loop
 setInterval(() => {
-  updatePosition(first);
-  if (first) {
-    first = false;
+  player.onKeysPressed(keysPressed);
+  player.draw();
+
+  // loop for drawing chasers
+  for (let i = 0; i < chasers.length; i++) {
+    const selectedChaser = chasers[i];
+    selectedChaser.updateChaserPosition(player.getPosition());
+    selectedChaser.draw();
+
+    // collision detection
+    const chaserCollidedWithPlayer = checkCollision(player, selectedChaser);
+
+    if (chaserCollidedWithPlayer) {
+      player.getHit();
+      // selectedChaser.element.remove();
+      // chasers.splice(i, 1);
+    }
+
+    let hitByAttack = areCircleAndSquareColliding(player.attack, selectedChaser);
+
+    if (hitByAttack) {
+      selectedChaser.getHit();
+      if (selectedChaser.chaserDead()) {
+        selectedChaser.element.remove();
+        chasers.splice(i, 1);
+        score.incrementScore(5); // Increment score by 5 when chaser is dead
+      }
+    }
   }
+
   // runs at 60 frames per second
 }, 1000 / 60);
+//
 
-// Please document the code as well as you can.
+addNewChaser(3000);

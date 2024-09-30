@@ -24,6 +24,6 @@ const highSCore = 30;
 
 const myUserData = {
   user: "someUSername",
-  email: "someEmail@meow.com",
+  email: "someEmail@.com",
   password: "password",
 };

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 
   forgotPasswordLink.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent the default link behavior
-    window.location.href = "http://localhost:3000/forgot-password/"; // Corrected the URL to match your desired endpoint
+    event.preventDefault();
+    window.location.href = "http://localhost:3000/forgot-password/";
   });
 });
