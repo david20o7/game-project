@@ -10,7 +10,11 @@ import {
   areCircleAndSquareColliding,
 } from "./utilities.js";
 
+const healthBarHUDContainer = document.querySelector("body");
+
 const box = document.querySelector("#box");
+
+const pauseScreen = document.querySelector("#pauseScreen");
 
 const playerStats = document.querySelector("#playerStats");
 
@@ -22,6 +26,10 @@ const chasers = [];
 
 player.addToBox(box);
 player.addPlayerStatsToBox(playerStats);
+
+// const healthBar = new HealthBar(player.state.maxHealth, 170, 30);
+
+healthBarHUDContainer.append();
 
 // keeping track of game time
 const timeAtGameStart = performance.now();
@@ -58,9 +66,18 @@ function createChaser() {
 
 // key pressed handlers
 let keysPressed = {};
+let gamePaused = false; // tracks to see if the game is paused
 
 const handleKeyDown = (e) => {
   keysPressed[e.key] = true;
+
+  // toggle pause when p is pressed
+  if (e.key === "p" || e.key === "P") {
+    gamePaused = !gamePaused;
+
+    // meow ? true  : false
+    pauseScreen.style.setProperty("display", gamePaused ? "flex" : "none");
+  }
 };
 
 const handleKeyUp = (e) => {
@@ -76,27 +93,29 @@ window.addEventListener("keyup", handleKeyUp);
  * Adds new chasers, increasing the interval at which they're added
  * as time goes on.
  */
-function addNewChaser(time) {
-  setTimeout(() => {
+
+let chaserSpawnRateFrames = 180;
+
+function addNewChaser2(currentFrame) {
+  if (currentFrame % chaserSpawnRateFrames === 0) {
     const newChaser = createChaser();
     chasers.push(newChaser);
-
-    const newTime = time - 100;
-    if (newTime > 1500) {
-      addNewChaser(newTime);
-    } else {
-      addNewChaser(time);
-    }
-  }, time);
+    chaserSpawnRateFrames -= 1;
+  }
 }
-//
+let frameCount = 0;
 
 // Main Game Loop
 setInterval(() => {
+  if (gamePaused) {
+    return;
+  }
+
   player.onKeysPressed(keysPressed);
   player.draw();
 
   // loop for drawing chasers
+  // for collision detection
   for (let i = 0; i < chasers.length; i++) {
     const selectedChaser = chasers[i];
     selectedChaser.updateChaserPosition(player.getPosition());
@@ -123,8 +142,9 @@ setInterval(() => {
     }
   }
 
+  // spawning new chasers
+  addNewChaser2(frameCount);
+  frameCount += 1;
   // runs at 60 frames per second
 }, 1000 / 60);
 //
-
-addNewChaser(3000);

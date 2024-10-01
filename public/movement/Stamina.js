@@ -18,7 +18,7 @@ export class Stamina {
 
   initElements() {
     this.staminaContainer.style.setProperty("height", "30px");
-    this.staminaContainer.style.setProperty("width", "120px");
+    this.staminaContainer.style.setProperty("width", "300px");
     this.staminaContainer.style.setProperty("border", "1px solid white");
 
     this.staminaBar.style.setProperty("height", "100%");
