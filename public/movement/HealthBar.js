@@ -7,8 +7,9 @@ export class HealthBar {
   healthContainer = document.createElement("div"); // index.html <div></div>
   healthBar = document.createElement("div"); // index.html <div></div>
 
-  constructor(maxHealth, healthBarWidth, position) {
+  constructor(maxHealth, healthBarWidth, healthBarHeight = 3) {
     this.healthBarWidth = healthBarWidth;
+    this.healthBarHeight = healthBarHeight;
     this.maxHealth = maxHealth;
     this.health = maxHealth;
     this.initElements();

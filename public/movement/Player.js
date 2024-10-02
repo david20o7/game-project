@@ -20,13 +20,14 @@ export class Player extends Entity {
       speed: 2,
       walkingSpeed: 2,
       sprintingSpeed: 7,
+      maxHealth: 100,
 
       ...initialState,
     });
 
     this.attack.updatePosition(this.state.position);
 
-    this.healthBar = new HealthBar(100, this.state.size);
+    this.healthBar = new HealthBar(this.state.maxHealth, this.state.size);
   }
 
   _initEntity() {
@@ -78,9 +79,11 @@ export class Player extends Entity {
 
       setTimeout(() => {
         this.hasImmunity = false;
+        this._updateEntityFlashing(false);
       }, 2000);
 
       this.hasImmunity = true;
+      this._updateEntityFlashing(true);
     }
   }
 

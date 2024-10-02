@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sprite Movement</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="style.css" />
 
     <script type="module" async defer src="utilities.js"></script>
@@ -13,7 +21,17 @@
     <script type="module" async defer src="script.js"></script>
   </head>
   <body>
-    <div id="healthBar">Health: <span id="healthCount">100</span>/100</div>
+    <div id="sillyBox"></div>
+    <div id="pauseScreen">
+      <div id="pauseBox">
+        <span class="bigText">PAUSED</span>
+        <span class="smallText">press <span class="keyboardKey">p</span> to resume</span>
+      </div>
+    </div>
+
+    <div id="healthBar">
+      <!-- Health: <span id="healthCount">100</span>/100 -->
+    </div>
     <!-- <div id="staminaBar">Stamina: <span id="staminaCount">100</span>/100</div> -->
     <div id="playerStats"></div>
     <div id="box"></div>
