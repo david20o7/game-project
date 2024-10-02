@@ -11,114 +11,43 @@ import {
   areCircleAndSquareColliding,
 } from "./utilities.js";
 
-const healthBarHUDContainer = document.querySelector("body");
-
 const box = document.querySelector("#box");
-
 const pauseScreen = document.querySelector("#pauseScreen");
-
 const playerStats = document.querySelector("#playerStats");
-
+const startButton = document.querySelector("#startGameButton");
 const arenaDims = [box.clientWidth, box.clientHeight];
 
 const player = new Player(arenaDims);
-const score = new Score();
-const chasers = [];
-
 player.addToBox(box);
 player.addPlayerStatsToBox(playerStats);
 
-// const healthBar = new HealthBar(player.state.maxHealth, 170, 30);
+const score = new Score();
 
-healthBarHUDContainer.append();
-
-// keeping track of game time
-const timeAtGameStart = performance.now();
-
-function getTimeFromGameStart() {
-  return performance.now() - timeAtGameStart;
-}
-//
-
-/**
- * - creates a chaser of a random size
- * - gives the chaser a speed inversely proportional to its size
- * - chaser speed then adjusted for difficulty
- * - random color also selected for chaser
- * - chaser placed somewhere on the edge of the play area
- */
-function createChaser() {
-  const chaserSize = getRandomSize();
-
-  const newSpeed = getSpeedFromSize(chaserSize);
-  const speedDifficultyIncrease = getTimeFromGameStart() / 200000;
-  const speedIncrease = newSpeed + speedDifficultyIncrease;
-
-  const newChaser = new Chaser(arenaDims, {
-    speed: speedIncrease,
-    color: getRandomColour(),
-    position: getRandomEdge(arenaDims),
-    size: chaserSize,
-  });
-
-  box.append(newChaser.getElement());
-  return newChaser;
-}
-
-// key pressed handlers
-let keysPressed = {};
-let gamePaused = false; // tracks to see if the game is paused
-
-const handleKeyDown = (e) => {
-  keysPressed[e.key] = true;
-
-  // toggle pause when p is pressed
-  if (e.key === "p" || e.key === "P") {
-    gamePaused = !gamePaused;
-
-    // meow ? true  : false
-    pauseScreen.style.setProperty("display", gamePaused ? "flex" : "none");
-  }
+const DEFAULT_STATE = {
+  chasers: [], // holds all the chasers currently on the screen
+  gamePaused: false, // tracks to see if the game is paused
+  keysPressed: {}, // holds keys currently being pressed
+  chaserSpawnRateFrames: 180, // rate at which a new chaser is spawned, at 3 seconds by default
+  frameCount: 0, // how many frames have passed since the game started
 };
 
-const handleKeyUp = (e) => {
-  delete keysPressed[e.key];
-};
-window.addEventListener("keydown", handleKeyDown);
-window.addEventListener("keyup", handleKeyUp);
-//
+let gameState = { ...structuredClone(DEFAULT_STATE) };
 
 // add a new chaser every time-100 seconds until there are 1500 seconds left
 
-/**
- * Adds new chasers, increasing the interval at which they're added
- * as time goes on.
- */
-
-let chaserSpawnRateFrames = 180;
-
-function addNewChaser2(currentFrame) {
-  if (currentFrame % chaserSpawnRateFrames === 0) {
-    const newChaser = createChaser();
-    chasers.push(newChaser);
-    chaserSpawnRateFrames -= 1;
-  }
-}
-let frameCount = 0;
-
 // Main Game Loop
 setInterval(() => {
-  if (gamePaused) {
+  if (gameState.gamePaused) {
     return;
   }
 
-  player.onKeysPressed(keysPressed);
+  player.onKeysPressed(gameState.keysPressed);
   player.draw();
 
   // loop for drawing chasers
   // for collision detection
-  for (let i = 0; i < chasers.length; i++) {
-    const selectedChaser = chasers[i];
+  for (let i = 0; i < gameState.chasers.length; i++) {
+    const selectedChaser = gameState.chasers[i];
     selectedChaser.updateChaserPosition(player.getPosition());
     selectedChaser.draw();
 
@@ -137,15 +66,88 @@ setInterval(() => {
       selectedChaser.getHit();
       if (selectedChaser.chaserDead()) {
         selectedChaser.element.remove();
-        chasers.splice(i, 1);
+        gameState.chasers.splice(i, 1);
         score.incrementScore(5); // Increment score by 5 when chaser is dead
       }
     }
   }
 
   // spawning new chasers
-  addNewChaser2(frameCount);
-  frameCount += 1;
+  addNewChaser(gameState.frameCount);
+  gameState.frameCount += 1;
   // runs at 60 frames per second
 }, 1000 / 60);
+
+/**
+ * Adds new chasers, increasing the interval at which they're added
+ * as time goes on.
+ */
+function addNewChaser(currentFrame) {
+  if (currentFrame % gameState.chaserSpawnRateFrames === 0) {
+    const newChaser = createChaser();
+    gameState.chasers.push(newChaser);
+    gameState.chaserSpawnRateFrames -= 1;
+  }
+}
+
+/**
+ * - creates a chaser of a random size
+ * - gives the chaser a speed inversely proportional to its size
+ * - chaser speed then adjusted for difficulty
+ * - random color also selected for chaser
+ * - chaser placed somewhere on the edge of the play area
+ */
+function createChaser() {
+  const chaserSize = getRandomSize();
+
+  const newSpeed = getSpeedFromSize(chaserSize);
+  const speedDifficultyIncrease = gameState.frameCount / 12000;
+  const speedIncrease = newSpeed + speedDifficultyIncrease;
+
+  const newChaser = new Chaser(arenaDims, {
+    speed: speedIncrease,
+    color: getRandomColour(),
+    position: getRandomEdge(arenaDims),
+    size: chaserSize,
+  });
+
+  box.append(newChaser.getElement());
+  return newChaser;
+}
+
+function handleKeyDown(e) {
+  gameState.keysPressed[e.key] = true;
+
+  // toggle pause when p is pressed
+  if (e.key === "p" || e.key === "P") {
+    gameState.gamePaused = !gameState.gamePaused;
+
+    // meow ? true  : false
+    pauseScreen.style.setProperty("display", gameState.gamePaused ? "flex" : "none");
+  }
+}
+
+function handleKeyUp(e) {
+  delete gameState.keysPressed[e.key];
+}
+
+window.addEventListener("keydown", handleKeyDown);
+window.addEventListener("keyup", handleKeyUp);
 //
+
+function removeAllChasers() {
+  for (let i = 0; i < gameState.chasers.length; i++) {
+    const selectedChaser = gameState.chasers[i];
+    selectedChaser.element.remove();
+  }
+}
+///////
+function myFunction() {
+  removeAllChasers();
+  gameState = { ...structuredClone(DEFAULT_STATE) };
+  score.resetCurrentScore();
+
+  console.log("Button is pressed");
+}
+
+startButton.onclick = myFunction;

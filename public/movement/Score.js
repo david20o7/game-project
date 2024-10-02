@@ -24,4 +24,9 @@ export class Score {
   updateScoreDisplay() {
     this.scoreElement.innerText = `Highest Score: ${this.highestScore}\nScore: ${this.currentScore}`;
   }
+
+  resetCurrentScore() {
+    this.currentScore = 0;
+    this.updateScoreDisplay();
+  }
 }

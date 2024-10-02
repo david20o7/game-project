@@ -100,7 +100,6 @@ export class Entity {
   }
 
   /**
-   *
    * ________
    * |      |
    * |  X   |
@@ -108,7 +107,6 @@ export class Entity {
    */
 
   // gets finds left, right, up and down of player
-
   getBounds() {
     return {
       left: this.state.position[0] - this.state.size / 2,
