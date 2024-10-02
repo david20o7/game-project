@@ -41,6 +41,14 @@ export class Entity {
     this.element.style.setProperty("height", this.state.size + "px");
   }
 
+  _updateEntityFlashing(willFlash) {
+    if (willFlash) {
+      this.element.classList.add("flash");
+    } else {
+      this.element.classList.remove("flash");
+    }
+  }
+
   draw() {
     if (!this.hasInit) {
       this._initEntity();

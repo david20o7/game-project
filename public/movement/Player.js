@@ -79,9 +79,11 @@ export class Player extends Entity {
 
       setTimeout(() => {
         this.hasImmunity = false;
+        this._updateEntityFlashing(false);
       }, 2000);
 
       this.hasImmunity = true;
+      this._updateEntityFlashing(true);
     }
   }
 

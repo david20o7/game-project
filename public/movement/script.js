@@ -1,5 +1,6 @@
 import { Player } from "./Player.js";
 import { Chaser } from "./Chaser.js";
+/** @ts-ignore */
 import { Score } from "./Score.js";
 import {
   checkCollision,
