@@ -10,6 +10,7 @@ import {
   getRandomSize,
   areCircleAndSquareColliding,
 } from "./utilities.js";
+import { Stamina } from "./Stamina.js";
 
 const box = document.querySelector("#box");
 const pauseScreen = document.querySelector("#pauseScreen");
@@ -22,6 +23,7 @@ player.addToBox(box);
 player.addPlayerStatsToBox(playerStats);
 
 const score = new Score();
+const stamina = new Stamina();
 
 const DEFAULT_STATE = {
   chasers: [], // holds all the chasers currently on the screen
@@ -133,7 +135,6 @@ function handleKeyUp(e) {
 
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
-//
 
 function removeAllChasers() {
   for (let i = 0; i < gameState.chasers.length; i++) {
@@ -141,11 +142,15 @@ function removeAllChasers() {
     selectedChaser.element.remove();
   }
 }
-///////
+
 function myFunction() {
   removeAllChasers();
   gameState = { ...structuredClone(DEFAULT_STATE) };
   score.resetCurrentScore();
+  player.resetPlayer();
+
+  stamina.resetStamina();
+  stamina.draw();
 
   console.log("Button is pressed");
 }

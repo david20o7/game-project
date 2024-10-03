@@ -74,7 +74,11 @@ export class Stamina {
   canUseStamina() {
     return !this.staminaLock;
   }
+
   // displays stamina
+  resetStamina() {
+    this.stamina = this.maxStamina;
+  }
 
   draw() {
     this.updateStaminaColor();
