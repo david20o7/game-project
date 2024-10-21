@@ -86,4 +86,11 @@ export class Stamina {
 
     this.staminaBar.style.setProperty("background-color", this.staminaBarColor);
   }
+
+  getStamina() {
+    return this.stamina;
+  }
+  getStaminaColour() {
+    return this.staminaBarColor;
+  }
 }

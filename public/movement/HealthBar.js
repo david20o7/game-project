@@ -44,4 +44,7 @@ export class HealthBar {
   draw() {
     this.healthBar.style.setProperty("width", this.healthPercentage() + "%");
   }
+  getHealth() {
+    return this.health;
+  }
 }

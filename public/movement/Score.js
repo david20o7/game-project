@@ -13,8 +13,8 @@ export class Score {
   }
 
   // when we store highest score
-  incrementScore(amount) {
-    this.currentScore += amount;
+  setScore(amount) {
+    this.currentScore = amount;
     if (this.currentScore > this.highestScore) {
       this.highestScore = this.currentScore;
     }

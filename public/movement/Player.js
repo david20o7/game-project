@@ -104,8 +104,15 @@ export class Player extends Entity {
     this.stamina.resetStamina();
     this.draw();
   }
-  // box is different than the box above ^ (stamina box)
-  addPlayerStatsToBox(box) {
-    box.append(this.stamina.staminaContainer);
+
+  isDead() {
+    return this.healthBar.getHealth() <= 0;
+  }
+
+  getStaminaData() {
+    return {
+      value: this.stamina.getStamina(),
+      colour: this.stamina.getStaminaColour(),
+    };
   }
 }

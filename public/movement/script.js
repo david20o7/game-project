@@ -10,20 +10,18 @@ import {
   getRandomSize,
   areCircleAndSquareColliding,
 } from "./utilities.js";
-import { Stamina } from "./Stamina.js";
 
+// maybe go into gam
 const box = document.querySelector("#box");
+
 const pauseScreen = document.querySelector("#pauseScreen");
-const playerStats = document.querySelector("#playerStats");
 const startButton = document.querySelector("#startGameButton");
 const arenaDims = [box.clientWidth, box.clientHeight];
 
 const player = new Player(arenaDims);
 player.addToBox(box);
-player.addPlayerStatsToBox(playerStats);
 
 const score = new Score();
-const stamina = new Stamina();
 
 const DEFAULT_STATE = {
   chasers: [], // holds all the chasers currently on the screen
@@ -31,6 +29,7 @@ const DEFAULT_STATE = {
   keysPressed: {}, // holds keys currently being pressed
   chaserSpawnRateFrames: 180, // rate at which a new chaser is spawned, at 3 seconds by default
   frameCount: 0, // how many frames have passed since the game started
+  score: 0, // current score
 };
 
 let gameState = { ...structuredClone(DEFAULT_STATE) };
@@ -69,7 +68,9 @@ setInterval(() => {
       if (selectedChaser.chaserDead()) {
         selectedChaser.element.remove();
         gameState.chasers.splice(i, 1);
-        score.incrementScore(5); // Increment score by 5 when chaser is dead
+        gameState.score += 5;
+        console.log(gameState.score);
+        score.setScore(gameState.score); // Increment score by 5 when chaser is dead
       }
     }
   }
@@ -124,7 +125,6 @@ function handleKeyDown(e) {
   if (e.key === "p" || e.key === "P") {
     gameState.gamePaused = !gameState.gamePaused;
 
-    // meow ? true  : false
     pauseScreen.style.setProperty("display", gameState.gamePaused ? "flex" : "none");
   }
 }
@@ -143,16 +143,11 @@ function removeAllChasers() {
   }
 }
 
-function myFunction() {
+function restartGame() {
   removeAllChasers();
   gameState = { ...structuredClone(DEFAULT_STATE) };
   score.resetCurrentScore();
   player.resetPlayer();
-
-  stamina.resetStamina();
-  stamina.draw();
-
-  console.log("Button is pressed");
 }
 
-startButton.onclick = myFunction;
+startButton.onclick = restartGame;
