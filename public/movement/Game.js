@@ -1,7 +1,6 @@
 import { Player } from "./Player.js";
 import { Chaser } from "./Chaser.js";
-/** @ts-ignore */
-import { Score } from "./Score.js";
+// import { Score } from "./Score.js";
 import {
   checkCollision,
   getRandomEdge,
@@ -11,12 +10,15 @@ import {
   areCircleAndSquareColliding,
 } from "./utilities.js";
 
+const FRAMERATE = 1000 / 60;
+
 const DEFAULT_STATE = {
   chasers: [], // holds all the chasers currently on the screen
   gamePaused: false, // tracks to see if the game is paused
   keysPressed: {}, // holds keys currently being pressed
   chaserSpawnRateFrames: 180, // rate at which a new chaser is spawned, at 3 seconds by default
   frameCount: 0, // how many frames have passed since the game started
+  score: 0, // player score
 };
 
 // Objectives of this class
@@ -29,24 +31,47 @@ const DEFAULT_STATE = {
 // game.getHealth
 //
 
-//
-//
-//
-//
-//
-//
-
 export class Game {
   gameState = { ...structuredClone(DEFAULT_STATE) };
+  interval = 0;
 
   gameArena = document.querySelector("#box");
-  pauseScreen = document.querySelector("#pauseScreen");
-  startButton = document.querySelector("#startGameButton");
+  // pauseScreen = document.querySelector("#pauseScreen");
+  // startButton = document.querySelector("#startGameButton");
+
+  // override this method to get the score whenever it updates
+  onScoreUpdated = (score) => {};
 
   constructor() {
     this.arenaDims = [this.gameArena.clientWidth, this.gameArena.clientHeight];
     this.player = new Player(this.arenaDims);
     this.player.addToBox(this.gameArena);
+
+    window.addEventListener("keydown", (e) => {
+      this.gameState.keysPressed[e.key] = true;
+
+      // toggle pause when p is pressed
+      if (e.key === "p" || e.key === "P") {
+        this.gameState.gamePaused = !this.gameState.gamePaused;
+
+        // TODO: add paused screen back in
+        // pauseScreen.style.setProperty("display", gameState.gamePaused ? "flex" : "none");
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      delete this.gameState.keysPressed[e.key];
+    });
+  }
+
+  restartGame() {
+    this.removeAllChasers();
+    this.gameState = { ...structuredClone(DEFAULT_STATE) };
+
+    this.onScoreUpdated(this.gameState.score);
+    this.player.resetPlayer();
+    // TODO: do some stuff about the score
+    // score.resetCurrentScore();
+    // player.resetPlayer();
   }
 
   /**
@@ -60,7 +85,7 @@ export class Game {
     const chaserSize = getRandomSize();
 
     const newSpeed = getSpeedFromSize(chaserSize);
-    const speedDifficultyIncrease = gameState.frameCount / 12000;
+    const speedDifficultyIncrease = this.gameState.frameCount / 12000;
     const speedIncrease = newSpeed + speedDifficultyIncrease;
 
     const newChaser = new Chaser(this.arenaDims, {
@@ -79,10 +104,75 @@ export class Game {
    * as time goes on.
    */
   addNewChaser(currentFrame) {
-    if (currentFrame % this.chaserSpawnRateFrames === 0) {
+    if (currentFrame % this.gameState.chaserSpawnRateFrames === 0) {
       const newChaser = this.createChaser();
       this.gameState.chasers.push(newChaser);
       this.gameState.chaserSpawnRateFrames -= 1;
     }
+  }
+
+  removeAllChasers() {
+    if (!this.gameState.chasers.length) {
+      return;
+    }
+
+    for (let i = 0; i < this.gameState.chasers.length; i++) {
+      const selectedChaser = this.gameState.chasers[i];
+      selectedChaser.element.remove();
+    }
+  }
+
+  gameLoop() {
+    if (this.gameState.gamePaused) {
+      return;
+    }
+
+    this.player.onKeysPressed(this.gameState.keysPressed);
+    this.player.draw();
+
+    // loop for drawing chasers
+    // for collision detection
+    for (let i = 0; i < this.gameState.chasers.length; i++) {
+      const selectedChaser = this.gameState.chasers[i];
+      selectedChaser.updateChaserPosition(this.player.getPosition());
+      selectedChaser.draw();
+
+      // collision detection
+      const chaserCollidedWithPlayer = checkCollision(this.player, selectedChaser);
+
+      if (chaserCollidedWithPlayer) {
+        this.player.getHit();
+        // selectedChaser.element.remove();
+        // chasers.splice(i, 1);
+      }
+
+      let hitByAttack = areCircleAndSquareColliding(this.player.attack, selectedChaser);
+
+      if (hitByAttack) {
+        selectedChaser.getHit();
+        if (selectedChaser.chaserDead()) {
+          selectedChaser.element.remove();
+          this.gameState.chasers.splice(i, 1);
+          this.updateScore(5);
+          // score.setScore(gameState.score); // Increment score by 5 when chaser is dead
+        }
+      }
+    }
+
+    // spawning new chasers
+    this.addNewChaser(this.gameState.frameCount);
+    this.gameState.frameCount += 1;
+    // runs at 60 frames per second
+  }
+
+  updateScore(scoreToAdd) {
+    this.gameState.score += scoreToAdd;
+    this.onScoreUpdated(this.gameState.score);
+  }
+
+  startGame() {
+    this.interval = setInterval(() => {
+      this.gameLoop();
+    }, FRAMERATE);
   }
 }
