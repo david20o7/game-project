@@ -22,6 +22,17 @@
   </head>
 
   <body>
+    <div id="startGameScreen" class="overlay">
+      <div id="startGameScreenBox" class="overlayBox">
+        <span class="bigText">Game name</span>
+        <!-- <span class="smallText">enter your name here</span> -->
+        <input type="text" id="username" placeholder="enter your name here" autocomplete="off" />
+        <span id="startGameButton" class="smallText disabled"
+          >[<span class="spacer"></span>start<span class="spacer"></span>]</span
+        >
+      </div>
+    </div>
+
     <div id="pauseScreen" class="overlay">
       <div id="pauseBox" class="overlayBox">
         <span class="bigText">PAUSED</span>

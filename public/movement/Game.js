@@ -25,8 +25,6 @@ export class Game {
   interval = 0;
 
   gameArena = document.querySelector("#box");
-  // pauseScreen = document.querySelector("#pauseScreen");
-  // startButton = document.querySelector("#startGameButton");
 
   // override these method to get the score whenever it updates
   onScoreUpdated = (score) => {};
@@ -116,7 +114,7 @@ export class Game {
   }
 
   gameLoop() {
-    if (this.gameState.gamePaused) {
+    if (this.gameState.gamePaused || this.player.isDead()) {
       return;
     }
 

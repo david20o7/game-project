@@ -64,6 +64,16 @@ body {
   gap: 30px;
 }
 
+#startGameScreen {
+  background-color: black;
+  display: flex;
+}
+
+#startGameScreenBox {
+  width: 700px;
+  height: 700px;
+}
+
 .bigText {
   font-size: 60px;
 }
@@ -109,6 +119,7 @@ git push --force .keyboardKey {
   flex-direction: column;
   gap: 10px;
 }
+
 .keyboardKey {
   font-weight: bold;
   padding: 1px 4px;
@@ -119,4 +130,44 @@ git push --force .keyboardKey {
 .smallText {
   font-size: 20px;
   color: #fff;
+  cursor: default;
+}
+
+#startGameButton {
+  color: white;
+  cursor: pointer;
+}
+
+#startGameButton.disabled {
+  pointer-events: none;
+  color: grey;
+}
+
+#startGameButton.disabled .spacer {
+  width: 0px;
+}
+
+.spacer {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+
+#startGameButton:hover {
+  color: yellow;
+}
+
+#startGameButton:hover .spacer {
+  width: 15px;
+}
+
+#username {
+  height: 50px;
+  outline: none;
+  background-color: transparent;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  font-family: "Silkscreen", sans-serif;
 }
