@@ -1,6 +1,5 @@
 import { Player } from "./Player.js";
 import { Chaser } from "./Chaser.js";
-// import { Score } from "./Score.js";
 import {
   checkCollision,
   getRandomEdge,
@@ -21,16 +20,6 @@ const DEFAULT_STATE = {
   score: 0, // player score
 };
 
-// Objectives of this class
-//const game = new Game();
-
-// game.pause
-// game.restart
-// game.getScore
-// game.getStamina
-// game.getHealth
-//
-
 export class Game {
   gameState = { ...structuredClone(DEFAULT_STATE) };
   interval = 0;
@@ -39,8 +28,12 @@ export class Game {
   // pauseScreen = document.querySelector("#pauseScreen");
   // startButton = document.querySelector("#startGameButton");
 
-  // override this method to get the score whenever it updates
+  // override these method to get the score whenever it updates
   onScoreUpdated = (score) => {};
+  onStaminaUpdated = (stamina) => {};
+  onPausedUpdated = (pause) => {};
+  onGameOver = () => {};
+  onGameRestart = () => {};
 
   constructor() {
     this.arenaDims = [this.gameArena.clientWidth, this.gameArena.clientHeight];
@@ -53,9 +46,11 @@ export class Game {
       // toggle pause when p is pressed
       if (e.key === "p" || e.key === "P") {
         this.gameState.gamePaused = !this.gameState.gamePaused;
+        this.onPausedUpdated(this.gameState.gamePaused);
+      }
 
-        // TODO: add paused screen back in
-        // pauseScreen.style.setProperty("display", gameState.gamePaused ? "flex" : "none");
+      if ((e.key === "r" || e.key === "R") && !this.gameState.gamePaused) {
+        this.restartGame();
       }
     });
     window.addEventListener("keyup", (e) => {
@@ -69,9 +64,7 @@ export class Game {
 
     this.onScoreUpdated(this.gameState.score);
     this.player.resetPlayer();
-    // TODO: do some stuff about the score
-    // score.resetCurrentScore();
-    // player.resetPlayer();
+    this.onGameRestart();
   }
 
   /**
@@ -129,6 +122,8 @@ export class Game {
 
     this.player.onKeysPressed(this.gameState.keysPressed);
     this.player.draw();
+    const staminaData = this.player.getStaminaData();
+    this.onStaminaUpdated(staminaData);
 
     // loop for drawing chasers
     // for collision detection
@@ -142,8 +137,9 @@ export class Game {
 
       if (chaserCollidedWithPlayer) {
         this.player.getHit();
-        // selectedChaser.element.remove();
-        // chasers.splice(i, 1);
+        if (this.player.isDead()) {
+          this.onGameOver();
+        }
       }
 
       let hitByAttack = areCircleAndSquareColliding(this.player.attack, selectedChaser);
@@ -154,7 +150,6 @@ export class Game {
           selectedChaser.element.remove();
           this.gameState.chasers.splice(i, 1);
           this.updateScore(5);
-          // score.setScore(gameState.score); // Increment score by 5 when chaser is dead
         }
       }
     }

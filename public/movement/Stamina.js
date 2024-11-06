@@ -7,26 +7,26 @@ export class Stamina {
   canRegenerate = true;
   staminaBarColor = "green";
 
-  staminaContainer = document.createElement("div"); // index.html <div></div>
-  staminaBar = document.createElement("div"); // index.html <div></div>
+  // staminaContainer = document.createElement("div"); // index.html <div></div>
+  // staminaBar = document.createElement("div"); // index.html <div></div>
 
-  constructor() {
-    this.initElements();
-  }
+  // constructor() {
+  // this.initElements();
+  // }
 
   // display stamina elements
 
-  initElements() {
-    this.staminaContainer.style.setProperty("height", "30px");
-    this.staminaContainer.style.setProperty("width", "300px");
-    this.staminaContainer.style.setProperty("border", "1px solid white");
+  // initElements() {
+  //   this.staminaContainer.style.setProperty("height", "30px");
+  //   this.staminaContainer.style.setProperty("width", "300px");
+  //   this.staminaContainer.style.setProperty("border", "1px solid white");
 
-    this.staminaBar.style.setProperty("height", "100%");
-    this.staminaBar.style.setProperty("width", "100%");
-    this.staminaBar.style.setProperty("background-color", "green");
+  //   this.staminaBar.style.setProperty("height", "100%");
+  //   this.staminaBar.style.setProperty("width", "100%");
+  //   this.staminaBar.style.setProperty("background-color", "green");
 
-    this.staminaContainer.append(this.staminaBar);
-  }
+  //   this.staminaContainer.append(this.staminaBar);
+  // }
   /*if stamina is used until stamina = 0, there will be a stamina lock for 1 second meaning the player will not be able to use the 
  stamina until it is above 50 */
   manageStaminaLock() {
@@ -81,16 +81,16 @@ export class Stamina {
   }
 
   draw() {
-    this.updateStaminaColor();
-    this.staminaBar.style.setProperty("width", this.stamina + "%");
-
-    this.staminaBar.style.setProperty("background-color", this.staminaBarColor);
+    // this.updateStaminaColor();
+    // this.staminaBar.style.setProperty("width", this.stamina + "%");
+    // this.staminaBar.style.setProperty("background-color", this.staminaBarColor);
   }
 
   getStamina() {
     return this.stamina;
   }
   getStaminaColour() {
+    this.updateStaminaColor();
     return this.staminaBarColor;
   }
 }

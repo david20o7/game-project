@@ -20,21 +20,32 @@
     <script type="module" async defer src="Player.js"></script>
     <script type="module" async defer src="script.js"></script>
   </head>
-  <body>
-    <button id="startGameButton">Start Game</button>
 
-    <div id="pauseScreen">
-      <div id="pauseBox">
+  <body>
+    <div id="pauseScreen" class="overlay">
+      <div id="pauseBox" class="overlayBox">
         <span class="bigText">PAUSED</span>
         <span class="smallText">press <span class="keyboardKey">p</span> to resume</span>
       </div>
     </div>
 
-    <div id="healthBar">
-      <!-- Health: <span id="healthCount">100</span>/100 -->
+    <div id="helpScreen" class="guideScreen">
+      <span class="smallText">press <span class="keyboardKey">p</span> to pause</span>
+      <span class="smallText">press <span class="keyboardKey">r</span> to restart</span>
+      <span class="smallText">
+        use <span class="keyboardKey">↑</span> <span class="keyboardKey">↓</span>
+        <span class="keyboardKey">←</span> <span class="keyboardKey">→</span> to move
+      </span>
     </div>
-    <!-- <div id="staminaBar">Stamina: <span id="staminaCount">100</span>/100</div> -->
+
+    <div id="deathScreen" class="overlay">
+      <div id="gameOverScreen" class="overlayBox">
+        <span class="bigText">DEAD</span>
+        <span class="smallText">DEAD <span class="keyboardKey">r</span> to restart</span>
+      </div>
+    </div>
+
+    <div id="staminaBoxContainer"></div>
     <div id="box"></div>
-    <div id="emoji"></div>
   </body>
 </html>
