@@ -21,16 +21,6 @@ app.use(connectLivereload());
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// Route for the root URL
-app.get("/login", (req, res) => {
-  console.log("sending over the login page");
-  res.sendFile(path.join(__dirname, "public", "login", "index.html"));
-});
-
-app.get("/register", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "register", "index.html"));
-});
-
 app.get("/movement", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "movement", "index.html"));
 });
@@ -53,11 +43,6 @@ app.get("/users", (req, res) => {
     const names = rows.map((row) => row.name);
     res.send(names.join(", "));
   });
-});
-
-app.get("/boo", (req, res) => {
-  console.log("sending over the login page");
-  res.send("HELLO");
 });
 
 app.listen(PORT, () => {
