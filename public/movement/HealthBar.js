@@ -37,8 +37,14 @@ export class HealthBar {
   healthPercentage() {
     return (this.health / this.maxHealth) * 100;
   }
+  resetHealth() {
+    this.health = this.maxHealth;
+  }
   // displays health bar above player with a percentage of the width
   draw() {
     this.healthBar.style.setProperty("width", this.healthPercentage() + "%");
+  }
+  getHealth() {
+    return this.health;
   }
 }

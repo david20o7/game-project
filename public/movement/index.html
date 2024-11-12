@@ -13,28 +13,47 @@
     />
 
     <link rel="stylesheet" href="style.css" />
-
-    <script type="module" async defer src="utilities.js"></script>
-    <script type="module" async defer src="Entity.js"></script>
-
-    <script type="module" async defer src="Player.js"></script>
-    <script type="module" async defer src="script.js"></script>
+    <script type="module" defer src="index.js"></script>
   </head>
+
   <body>
-    <div id="sillyBox"></div>
-    <div id="pauseScreen">
-      <div id="pauseBox">
+    <div id="startGameScreen" class="overlay">
+      <div id="startGameScreenBox" class="overlayBox">
+        <span class="bigText">Game Title</span>
+        <!-- <span class="smallText">enter your name here</span> -->
+        <input type="text" id="username" placeholder="enter your name here" autocomplete="off" />
+        <span id="startGameButton" class="smallText disabled"
+          >[<span class="spacer"></span>start<span class="spacer"></span>]</span
+        >
+      </div>
+    </div>
+
+    <div id="pauseScreen" class="overlay">
+      <div id="pauseBox" class="overlayBox">
         <span class="bigText">PAUSED</span>
         <span class="smallText">press <span class="keyboardKey">p</span> to resume</span>
       </div>
     </div>
 
-    <div id="healthBar">
-      <!-- Health: <span id="healthCount">100</span>/100 -->
+    <div id="helpScreen" class="guideScreen">
+      <span class="smallText">press <span class="keyboardKey">p</span> to pause</span>
+      <span class="smallText">press <span class="keyboardKey">r</span> to restart</span>
+      <span class="smallText">press <span class="keyboardKey">space</span> to attack</span>
+      <span class="smallText">
+        use <span class="keyboardKey">↑</span> <span class="keyboardKey">↓</span>
+        <span class="keyboardKey">←</span> <span class="keyboardKey">→</span> to move
+      </span>
     </div>
-    <!-- <div id="staminaBar">Stamina: <span id="staminaCount">100</span>/100</div> -->
-    <div id="playerStats"></div>
+
+    <div id="deathScreen" class="overlay">
+      <div id="gameOverScreen" class="overlayBox">
+        <span class="bigText">You Died!</span>
+        <span id="gameOverMessage" class="smallText">meow</span>
+        <span class="smallText">press <span class="keyboardKey">r</span> to restart</span>
+      </div>
+    </div>
+
+    <div id="staminaBoxContainer"></div>
     <div id="box"></div>
-    <div id="emoji"></div>
   </body>
 </html>

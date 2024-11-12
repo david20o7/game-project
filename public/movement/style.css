@@ -20,7 +20,7 @@ body {
   margin: 10px;
 }
 
-#pauseScreen {
+.overlay {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.7);
@@ -32,7 +32,23 @@ body {
   display: none;
 }
 
-#pauseBox {
+.overlayBox {
+  width: 400px;
+  height: 300px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  /* filter: blur(10px); */
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.guideBox {
   width: 400px;
   height: 300px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -48,6 +64,16 @@ body {
   gap: 30px;
 }
 
+#startGameScreen {
+  background-color: black;
+  display: flex;
+}
+
+#startGameScreenBox {
+  width: 700px;
+  height: 700px;
+}
+
 .bigText {
   font-size: 60px;
 }
@@ -55,7 +81,7 @@ body {
   font-size: 30px;
 }
 
-.keyboardKey {
+git push --force .keyboardKey {
   background-color: black;
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding-left: 10px;
@@ -65,15 +91,6 @@ body {
   box-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
   text-align: center;
   font-size: 25px;
-}
-
-#sillyBox {
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  background-color: red;
-  top: 10px;
-  left: 10px;
 }
 
 .flash {
@@ -90,4 +107,67 @@ body {
   100% {
     opacity: 1;
   }
+}
+
+#helpScreen {
+  position: fixed;
+  left: 10px;
+  background-color: rgb(0, 0, 0);
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.keyboardKey {
+  font-weight: bold;
+  padding: 1px 4px;
+  background-color: #333;
+  border-radius: 3px;
+  color: #ffffff;
+}
+.smallText {
+  font-size: 20px;
+  color: #fff;
+  cursor: default;
+}
+
+#startGameButton {
+  color: white;
+  cursor: pointer;
+}
+
+#startGameButton.disabled {
+  pointer-events: none;
+  color: grey;
+}
+
+#startGameButton.disabled .spacer {
+  width: 0px;
+}
+
+.spacer {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+
+#startGameButton:hover {
+  color: yellow;
+}
+
+#startGameButton:hover .spacer {
+  width: 15px;
+}
+
+#username {
+  height: 50px;
+  outline: none;
+  background-color: transparent;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  font-family: "Silkscreen", sans-serif;
 }

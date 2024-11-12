@@ -115,3 +115,7 @@ export function getRandomSize() {
   const SPEED_RANGE = 30;
   return Math.random() * SPEED_RANGE + SPEED_OFFSET;
 }
+
+export function isValid(text) {
+  return text.length > 3 && text.length < 16;
+}
