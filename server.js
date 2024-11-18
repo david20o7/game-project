@@ -19,11 +19,9 @@ const db = new SQL.Database(Database_Name);
 app.use(connectLivereload());
 
 // Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public", "movement")));
 
-app.get("/movement", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "movement", "index.html"));
-});
+app.use(express.static("public"));
 
 app.get("/users", (req, res) => {
   console.log("sending over the login page");
@@ -41,7 +39,7 @@ app.get("/users", (req, res) => {
     }
 
     const names = rows.map((row) => row.name);
-    res.send(names.join(", "));
+    res.json(rows);
   });
 });
 

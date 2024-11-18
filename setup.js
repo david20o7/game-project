@@ -15,9 +15,9 @@ const db = new SQL.Database(Database_Name);
 db.serialize(() => {
   db.run("CREATE TABLE user (id INT, name TEXT)");
 
-  db.run("INSERT INTO user (id,name) Values(1, 'Test 1')");
-  db.run("INSERT INTO user (id,name) Values(2, 'Test 2')");
-  db.run("INSERT INTO user (id,name) Values(3, 'Test 3')");
+  db.run("INSERT INTO user (id,name) Values(1, 'Bobby bobbyson')");
+  db.run("INSERT INTO user (id,name) Values(2, 'William Williamson')");
+  db.run("INSERT INTO user (id,name) Values(3, 'Steevie Steevieson')");
 
   //run a query where we want to process the output
   db.all("SELECT * FROM user", (error, rows) => {
