@@ -16,7 +16,10 @@ const PORT = 3000;
 const Database_Name = "my-database.db";
 const db = new SQL.Database(Database_Name);
 
+// app.use(express.urlencoded({ extended: true }));
+
 app.use(connectLivereload());
+app.use(express.json());
 
 // Serve static files from the 'public' direcladtory
 app.use(express.static(path.join(__dirname, "public", "movement")));
@@ -40,6 +43,12 @@ app.get("/users", (req, res) => {
 
     res.json(rows);
   });
+});
+
+app.post("/submitScore", (req, res) => {
+  console.log(req.body);
+
+  res.send();
 });
 
 app.listen(PORT, () => {

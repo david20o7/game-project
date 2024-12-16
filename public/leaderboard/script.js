@@ -30,3 +30,9 @@ fetch("/users")
       leaderboardTable.append(row);
     }
   });
+
+fetch("/submitScore")
+  .then((response) => {
+    return response.json();
+  })
+  .then((response) => {});

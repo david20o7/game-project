@@ -56,11 +56,22 @@ function beginGame() {
 
   game.onGameOver = () => {
     deathScreen.style.setProperty("display", "flex");
+    submitHighScore();
   };
 
   game.onGameRestart = () => {
     deathScreen.style.setProperty("display", "none");
+    submitHighScore();
   };
 
   game.startGame();
+}
+
+function submitHighScore() {
+  const data = {};
+  fetch("/submitScore", {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
