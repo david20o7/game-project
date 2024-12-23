@@ -46,9 +46,30 @@ app.get("/users", (req, res) => {
 });
 
 app.post("/submitScore", (req, res) => {
-  console.log(req.body);
+  // const username = req.body.username;
+  // const score = req.body.score;
+  const { score, username } = req.body;
+
+  db.get(`SELECT * FROM user WHERE name = ?`, [username], (err, result) => {
+    // TODO: ERROR HANDLING
+    // undefined | {id: , name: '', score:}
+    if (result === undefined) {
+      db.run("INSERT INTO user (name, score) VALUES(?, ?)", [username, score]);
+    } else {
+      if (result.score < score) {
+        db.run("UPDATE user SET score = ? WHERE name = ?", [score, username]);
+      }
+    }
+  });
 
   res.send();
+});
+
+app.get("/userHighScore", (req, res) => {
+  const params = req.query;
+  db.get(`SELECT * FROM user WHERE name = ?`, [params.username], (err, result) => {
+    res.json(result || {});
+  });
 });
 
 app.listen(PORT, () => {
@@ -62,3 +83,22 @@ liveReloadServer.server.once("connection", () => {
     liveReloadServer.refresh("/");
   }, 100);
 });
+
+// class DataBase {
+
+//   constructor() {
+
+//   }
+
+//   get(query, parameters, fn) {
+//     /// runs query with pareeters
+
+//     // gets result
+//     // calls the function WITH the result
+
+//     fn(result)
+
+//   }
+// }
+
+// const dbb = new Database()
