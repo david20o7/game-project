@@ -13,20 +13,9 @@ const db = new SQL.Database(Database_Name);
 
 // //interact with the database
 db.serialize(() => {
-  db.run("CREATE TABLE user (id INT, name TEXT)");
+  db.run("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, score INT)");
 
-  db.run("INSERT INTO user (id,name) Values(1, 'Test 1')");
-  db.run("INSERT INTO user (id,name) Values(2, 'Test 2')");
-  db.run("INSERT INTO user (id,name) Values(3, 'Test 3')");
-
-  //run a query where we want to process the output
-  db.all("SELECT * FROM user", (error, rows) => {
-    rows.forEach((row) => {
-      const id = row.id;
-      const name = row.name;
-      console.log(id, name);
-    });
-  });
+  // adding examples
 });
 
 db.close();

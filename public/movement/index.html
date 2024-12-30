@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sprite Movement</title>
 
@@ -25,6 +26,7 @@
         <span id="startGameButton" class="smallText disabled"
           >[<span class="spacer"></span>start<span class="spacer"></span>]</span
         >
+        <a href="/leaderboard">go to leaderboard</a>
       </div>
     </div>
 
@@ -36,6 +38,7 @@
     </div>
 
     <div id="helpScreen" class="guideScreen">
+      <span class="smallText">hold <span class="keyboardKey">shift</span> to sprint</span>
       <span class="smallText">press <span class="keyboardKey">p</span> to pause</span>
       <span class="smallText">press <span class="keyboardKey">r</span> to restart</span>
       <span class="smallText">press <span class="keyboardKey">space</span> to attack</span>
@@ -48,7 +51,7 @@
     <div id="deathScreen" class="overlay">
       <div id="gameOverScreen" class="overlayBox">
         <span class="bigText">You Died!</span>
-        <span id="gameOverMessage" class="smallText">meow</span>
+        <span id="gameOverMessage" class="smallText"></span>
         <span class="smallText">press <span class="keyboardKey">r</span> to restart</span>
       </div>
     </div>

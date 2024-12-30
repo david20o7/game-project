@@ -9,7 +9,8 @@ const startGameButton = document.querySelector("#startGameButton");
 const username = document.querySelector("#username");
 const gameOverMessage = document.querySelector("#gameOverMessage");
 
-username.value = localStorage.getItem("name");
+const firstName = localStorage.getItem("name");
+username.value = firstName;
 
 if (isValid(username.value)) {
   startGameButton.classList.remove(["disabled"]);
@@ -27,9 +28,18 @@ username.addEventListener("input", (e) => {
 });
 
 startGameButton.addEventListener("click", () => {
-  startGameScreen.style.setProperty("display", "none");
-  localStorage.setItem("name", username.value);
-  beginGame();
+  localStorage.setItem("highestScore", "0");
+  fetch(`/userHighScore?username=${username.value}`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((response) => {
+      startGameScreen.style.setProperty("display", "none");
+      localStorage.setItem("highestScore", `${response?.score || 0}`);
+
+      localStorage.setItem("name", username.value);
+      beginGame();
+    });
 });
 
 function beginGame() {
@@ -56,11 +66,28 @@ function beginGame() {
 
   game.onGameOver = () => {
     deathScreen.style.setProperty("display", "flex");
+    submitHighScore();
   };
 
   game.onGameRestart = () => {
     deathScreen.style.setProperty("display", "none");
+    submitHighScore();
   };
 
   game.startGame();
+}
+
+function submitHighScore() {
+  const name = username.value;
+  const highestScore = localStorage.getItem("highestScore");
+  const data = {
+    username: name,
+    score: highestScore,
+  };
+
+  fetch("/submitScore", {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }

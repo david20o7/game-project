@@ -1,7 +1,15 @@
-document.addEventListener("DOMContentLoaded", (event) => {
-  const signUpButton = document.getElementById("signUpButton");
+window.addEventListener("DOMContentLoaded", () => {
+  const registerButton = document.getElementById("registerButton");
+  const username = document.getElementById("username");
+  const password = document.getElementById("password");
 
-  signUpButton.addEventListener("click", () => {
-    window.location.href = "http://localhost:3000/login/";
+  registerButton.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    localStorage.setItem("username", username.value);
+    localStorage.setItem("password", password.value);
+
+    console.log(username.value);
+    console.log(password.value);
   });
 });

@@ -1,0 +1,45 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: "Silkscreen", sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  width: 900px;
+  margin: auto;
+  margin-top: 100px;
+}
+
+thead {
+  background-color: rgba(177, 177, 177, 0.342);
+}
+
+/*  table header cell */
+th {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  padding: 20px;
+}
+
+/* table data cell */
+td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* table body */
+#leaderboardTable {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+tbody tr:hover {
+  background-color: yellow;
+  color: black;
+}
+#title {
+  text-align: center;
+  margin-top: 50px;
+}

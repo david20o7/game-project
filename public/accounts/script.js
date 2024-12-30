@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("loginForm");
 
   form.addEventListener("submit", (event) => {
-    event.preventDefault(); // Prevent the form from submitting the traditional way
+    event.preventDefault();
 
     const formElements = event.target.elements;
     const values = {};
@@ -19,12 +19,5 @@ document.addEventListener("DOMContentLoaded", function () {
     // Log form data to console (for testing purposes)
     console.log(values);
     console.log("we are in the login page");
-  });
-
-  const forgotPasswordLink = document.getElementById("forgotPasswordLink");
-
-  forgotPasswordLink.addEventListener("click", function (event) {
-    event.preventDefault();
-    window.location.href = "http://localhost:3000/forgot-password/";
   });
 });
