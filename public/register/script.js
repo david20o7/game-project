@@ -1,15 +1,30 @@
-window.addEventListener("DOMContentLoaded", () => {
-  const registerButton = document.getElementById("registerButton");
-  const username = document.getElementById("username");
-  const password = document.getElementById("password");
+const registerButton = document.getElementById("registerButton");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 
-  registerButton.addEventListener("click", (event) => {
-    event.preventDefault();
+const serverMessageText = document.getElementById("serverMessage");
 
-    localStorage.setItem("username", username.value);
-    localStorage.setItem("password", password.value);
+registerButton.addEventListener("click", (event) => {
+  event.preventDefault();
 
-    console.log(username.value);
-    console.log(password.value);
+  const username = usernameInput.value;
+  const password = passwordInput.value;
+
+  const data = { username: username, password: password };
+
+  fetch("/register", {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(data),
+  }).then((res) => {
+    if (res.status === 201) {
+      serverMessageText.style.setProperty("display", "block");
+      serverMessageText.style.setProperty("color", "green");
+      serverMessageText.innerHTML = "Account Created Successfully";
+    } else if (res.status === 409) {
+      serverMessageText.style.setProperty("display", "block");
+      serverMessageText.style.setProperty("color", "red");
+      serverMessageText.innerHTML = "Error: Username Invalid";
+    }
   });
 });

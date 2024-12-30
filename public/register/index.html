@@ -5,43 +5,15 @@
     <title>Dungeon Seeker</title>
     <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
-    <!-- Ensure the script is correctly linked and using defer -->
-    <!--<script
-      src="https://kit.fontawesome.com/1d6c9db0c3.js"
-      crossorigin="anonymous"
-    ></script> 
-    This is used from 'front awesome' for icon kits (line of code above) -->
   </head>
   <body>
-    <div id="mySquare"></div>
-    <div class="container">
-      <div class="form-box">
-        <h1>REGISTER</h1>
-        <form id="loginForm">
-          <div class="input-group">
-            <div class="input-field">
-              <i class="fa-solid fa-spider"></i>
-              <input type="text" id="username" placeholder="Username" />
-            </div>
-            <div class="input-field">
-              <i class="fa-solid fa-key"></i>
-              <input type="password" id="password" placeholder="password" />
-            </div>
-          </div>
-
-          
-          <div class="btn-field">
-            <button type="button" id="registerButton">
-              <a href="/accounts">Register</a>
-            </button>
-          </div>
-
-
-          <div class="btn-field">
-            <button type="button" id="returnButton">
-              <a href="/accounts">Back</a>
-            </button>
-      </div>
+    <div class="Container">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="password" />
+      <button type="button" id="registerButton">
+        <a href="/accounts">Register</a>
+      </button>
+      <p id="serverMessage"></p>
     </div>
   </body>
 </html>

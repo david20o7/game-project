@@ -13,9 +13,27 @@ const db = new SQL.Database(Database_Name);
 
 // //interact with the database
 db.serialize(() => {
+  // TODO: Remove eventually
   db.run("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, score INT)");
 
-  // adding examples
+  db.run(`
+    CREATE TABLE account (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      username TEXT NOT NULL UNIQUE, 
+      password TEXT NOT NULL
+    );
+  `);
+
+  // should be changed to only hold display name and high score.
+  db.run(`
+    CREATE TABLE IF NOT EXISTS game_data (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      character_name TEXT,
+      high_score INTEGER DEFAULT 0,
+      FOREIGN KEY (user_id) REFERENCES account (id) ON DELETE CASCADE
+    );
+  `);
 });
 
 db.close();

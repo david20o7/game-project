@@ -27,6 +27,7 @@ app.use(express.static(path.join(__dirname, "public", "movement")));
 // Serve static files from the 'public' directory
 app.use(express.static("public"));
 
+// TODO: change this to work with the game_data instead
 app.get("/users", (req, res) => {
   // Run a query where we want to process the output
   db.all("SELECT * FROM user ORDER BY score DESC;", (error, rows) => {
@@ -41,18 +42,17 @@ app.get("/users", (req, res) => {
       return;
     }
 
+    // array of stuff like {"id":7,"name":"Fiona Fionason","score":400}
     res.json(rows);
   });
 });
 
+// adding the score to the DB
+// TODO: change this to work with the user
 app.post("/submitScore", (req, res) => {
-  // const username = req.body.username;
-  // const score = req.body.score;
   const { score, username } = req.body;
 
   db.get(`SELECT * FROM user WHERE name = ?`, [username], (err, result) => {
-    // TODO: ERROR HANDLING
-    // undefined | {id: , name: '', score:}
     if (result === undefined) {
       db.run("INSERT INTO user (name, score) VALUES(?, ?)", [username, score]);
     } else {
@@ -72,6 +72,34 @@ app.get("/userHighScore", (req, res) => {
   });
 });
 
+app.get("/accountList", (req, res) => {
+  db.all("SELECT * FROM account", (error, rows) => {
+    res.json(rows);
+  });
+});
+
+app.post("/register", (req, res) => {
+  // do something
+  const { password, username } = req.body;
+
+  if (username.length === 0 || password.length === 0) {
+    res.status(409).send("username exists");
+    return;
+  }
+
+  db.all(
+    "INSERT INTO account (username, password) VALUES(?, ?)",
+    [username, password],
+    (error, result) => {
+      if (error) {
+        res.status(409).send("username exists");
+      } else {
+        res.send(201).send();
+      }
+    }
+  );
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   // console.log(`try http://localhost:${PORT}/movement`);
@@ -83,22 +111,3 @@ liveReloadServer.server.once("connection", () => {
     liveReloadServer.refresh("/");
   }, 100);
 });
-
-// class DataBase {
-
-//   constructor() {
-
-//   }
-
-//   get(query, parameters, fn) {
-//     /// runs query with pareeters
-
-//     // gets result
-//     // calls the function WITH the result
-
-//     fn(result)
-
-//   }
-// }
-
-// const dbb = new Database()
