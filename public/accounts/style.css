@@ -1,102 +1,78 @@
-.container {
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif;
-  box-sizing: border-box;
-}
-
-.container {
-  width: 100%;
+body {
+  font-family: "Silkscreen", sans-serif;
+  color: rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
-  background: rgb(100, 49, 181);
-  background-position: center;
-  background-size: cover;
-  position: relative;
+  margin: 0;
+  background-color: rgb(0, 0, 0);
+  flex-direction: column;
+}
+.box {
+  font-family: "Silkscreen", sans-serif;
+  color: rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: rgb(0, 0, 0);
+  flex-direction: column;
 }
 
-.form-box {
-  width: 90%;
-  max-width: 450px;
+.Container {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  gap: 15px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #ffffff;
-  padding: 50px 60px 70px;
-  text-align: center;
+  background-color: #000000;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-.form-box h1 {
-  font-size: 30px;
-  margin-bottom: 60px;
+button {
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
   color: black;
-  position: relative;
+  font-family: "Silkscreen", sans-serif;
 }
 
-.form-box h1::after {
-  content: "";
-  width: 120px;
-  height: 4px;
-  border-radius: 3px;
-  background: hsl(0, 0%, 50%); /* Fix the hsl value */
-  position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
+#username {
+  height: 50px;
+  outline: none;
+  background-color: transparent;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  font-family: "Silkscreen", sans-serif;
 }
 
-.input-field {
-  background: #eaeaea;
-  margin: 15px 0;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
+#password {
+  height: 50px;
+  outline: none;
+  background-color: transparent;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  font-family: "Silkscreen", sans-serif;
 }
 
-input {
-  width: 100%;
-  background: transparent;
-  border: 0;
-  outline: 0;
-  padding: 18px 15px;
-}
-
-.input-field i {
-  margin-left: 15px;
-  color: #b56497;
-}
-
-form p {
-  text-align: left;
-  font-size: 13px;
-}
-
-form p a {
-  text-decoration: none;
-  color: #4e3555;
-}
-
-/* Fixing the commented-out btn-field */
-.btn-field {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end; /* Align items to the right */
-}
-
-.btn-field button {
-  position: relative;
-  top: -15px; /* Consider adjusting this */
-  background: #ffffff;
-  color: #5c2020;
-  height: 30px;
-  width: 90px;
-  border-radius: 0;
-  border: 2px solid #252525;
-  outline: 0;
-  cursor: pointer;
-  transition: background 1s;
-}
-
-.btn-field button:hover {
-  background: #d4d1d1;
+.bigText {
+  font-size: 50px;
+  font-weight: bold;
+  margin: auto;
+  margin-top: 185px;
+  color: rgb(255, 255, 255);
+  font-family: "Silkscreen", sans-serif;
 }

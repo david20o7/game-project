@@ -5,13 +5,22 @@
     <title>Dungeon Seeker</title>
     <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
+    <link
+    href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
   </head>
   <body>
+    <div class="box">
+    <span class="bigText">REGISTER</span>
     <div class="Container">
       <input type="text" id="username" placeholder="Username" />
-      <input type="password" id="password" placeholder="password" />
+      <input type="password" id="password" placeholder="Password" />
       <button type="button" id="registerButton">
         <a href="/accounts">Register</a>
+      </button>
+      <button type="button" id="backButton">
+        <a href="/accounts">Return to login</a>
       </button>
       <p id="serverMessage"></p>
     </div>

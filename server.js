@@ -78,12 +78,41 @@ app.get("/accountList", (req, res) => {
   });
 });
 
+app.post("/endpoint", (req, res) => {
+  const { username } = req.body;
+
+  db.get("SELECT * FROM account WHERE username = ? ", [username]);
+});
+
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (username.length === 0 || password.length === 0) {
+    res.status(409).send("Invalid");
+    return;
+  }
+
+  db.get(
+    "SELECT * FROM account WHERE username = ? AND password = ?",
+    [username, password],
+    (error, row) => {
+      if (error) {
+        res.status(500).send("Invalid username or password.");
+      } else if (row) {
+        res.status(200).send("Login successful!");
+      } else {
+        res.status(401).send("Invalid username or password.");
+      }
+    }
+  );
+});
+
 app.post("/register", (req, res) => {
   // do something
   const { password, username } = req.body;
 
   if (username.length === 0 || password.length === 0) {
-    res.status(409).send("username exists");
+    res.status(409).send("invalid / already exists");
     return;
   }
 

@@ -1,23 +1,37 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
+const serverMessageText = document.getElementById("serverMessage");
 
-    const formElements = event.target.elements;
-    const values = {};
+loginButton.addEventListener("click", (event) => {
+  event.preventDefault();
 
-    // Collect form data
-    for (const formElement of Array.from(formElements)) {
-      if (formElement.id) {
-        const name = formElement.id;
-        const value = formElement.value;
-        values[name] = value;
-      }
+  const username = usernameInput.value;
+  const password = passwordInput.value;
+
+  const data = { username: username, password: password };
+
+  fetch("/login", {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(data),
+  }).then((res) => {
+    const status = res.status;
+
+    if (res.status === 200) {
+      serverMessageText.style.setProperty("display", "block");
+      serverMessageText.style.setProperty("color", "green");
+      serverMessageText.innerHTML = "Login successful!";
+      window.location.href = "/";
+    } else if (status >= 400 && status < 500) {
+      serverMessageText.style.setProperty("display", "block");
+      serverMessageText.style.setProperty("color", "red");
+      serverMessageText.innerHTML = "Error: Invalid username or password";
+    } else if (res.status === 500) {
+      serverMessageText.style.setProperty("display", "block");
+      serverMessageText.style.setProperty("color", "red");
+      serverMessageText.innerHTML = "Error: Server issue, please try again later";
     }
-
-    // Log form data to console (for testing purposes)
-    console.log(values);
-    console.log("we are in the login page");
   });
 });

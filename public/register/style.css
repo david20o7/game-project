@@ -1,17 +1,78 @@
+body {
+  font-family: "Silkscreen", sans-serif;
+  color: rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: rgb(0, 0, 0);
+  flex-direction: column;
+}
+.box {
+  font-family: "Silkscreen", sans-serif;
+  color: rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: rgb(0, 0, 0);
+  flex-direction: column;
+}
+
 .Container {
   display: flex;
   flex-direction: column;
-  width: 200px;
-  gap: 10px;
-  position: relative;
-  overflow: hidden;
-
-  margin: 0;
+  width: 300px;
+  gap: 15px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  background-color: #000000;
+  padding: 20px;
+  border-radius: 10px;
 }
-#serverMessage {
-  display: none;
+
+button {
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  color: black;
+  font-family: "Silkscreen", sans-serif;
+}
+
+#username {
+  height: 50px;
+  outline: none;
+  background-color: transparent;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  font-family: "Silkscreen", sans-serif;
+}
+
+#password {
+  height: 50px;
+  outline: none;
+  background-color: transparent;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  font-family: "Silkscreen", sans-serif;
+}
+
+.bigText {
+  font-size: 50px;
+  font-weight: bold;
+  margin: auto;
+  margin-top: 185px;
+  color: rgb(255, 255, 255);
+  font-family: "Silkscreen", sans-serif;
 }
