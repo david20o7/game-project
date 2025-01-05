@@ -2,44 +2,49 @@ import { Score } from "./Score.js";
 import { StaminaBar } from "./StaminaBar.js";
 
 import { Game } from "./Game.js";
-import { isValid } from "./utilities.js";
+// import { isValid } from "./utilities.js";
 
 const startGameScreen = document.querySelector("#startGameScreen");
-const startGameButton = document.querySelector("#startGameButton");
-const username = document.querySelector("#username");
+// const startGameButton = document.querySelector("#startGameButton");
+// const username = document.querySelector("#username");
 const gameOverMessage = document.querySelector("#gameOverMessage");
 
-const firstName = localStorage.getItem("name");
-username.value = firstName;
+// const firstName = localStorage.getItem("name");
+// username.value = firstName;
 
-if (isValid(username.value)) {
-  startGameButton.classList.remove(["disabled"]);
-}
+// if (isValid(username.value)) {
+//   startGameButton.classList.remove(["disabled"]);
+// }
 
-username.addEventListener("input", (e) => {
-  const name = e.target.value.toUpperCase();
+// TODO: update game over text
+gameOverMessage.innerText = `Sorry ${name} you have died`;
 
-  if (isValid(name)) {
-    startGameButton.classList.remove(["disabled"]);
-  } else {
-    startGameButton.classList.add(["disabled"]);
-  }
-  gameOverMessage.innerText = `Sorry ${name} you have died`;
-});
+// username.addEventListener("input", (e) => {
+//   const name = e.target.value.toUpperCase();
 
+//   if (isValid(name)) {
+//     startGameButton.classList.remove(["disabled"]);
+//   } else {
+//     startGameButton.classList.add(["disabled"]);
+//   }
+// });
+
+// TODO: add start game button in the game screen
 startGameButton.addEventListener("click", () => {
+  startGameScreen.style.setProperty("display", "none");
   localStorage.setItem("highestScore", "0");
-  fetch(`/userHighScore?username=${username.value}`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((response) => {
-      startGameScreen.style.setProperty("display", "none");
-      localStorage.setItem("highestScore", `${response?.score || 0}`);
+  beginGame();
 
-      localStorage.setItem("name", username.value);
-      beginGame();
-    });
+  // TODO: use the game_data table to get the high score from
+  // fetch(`/userHighScore?username=${username.value}`)
+  //   .then((response) => {
+  //     return response.json();
+  //   })
+  //   .then((response) => {
+  //     startGameScreen.style.setProperty("display", "none");
+  //     localStorage.setItem("highestScore", `${response?.score || 0}`);
+  //     localStorage.setItem("name", username.value);
+  //   });
 });
 
 function beginGame() {
@@ -78,16 +83,16 @@ function beginGame() {
 }
 
 function submitHighScore() {
-  const name = username.value;
-  const highestScore = localStorage.getItem("highestScore");
-  const data = {
-    username: name,
-    score: highestScore,
-  };
-
-  fetch("/submitScore", {
-    headers: { "Content-Type": "application/json" },
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  // TODO: update to use the new endpoint (probably)
+  // const name = username.value;
+  // const highestScore = localStorage.getItem("highestScore");
+  // const data = {
+  //   username: name,
+  //   score: highestScore,
+  // };
+  // fetch("/submitScore", {
+  //   headers: { "Content-Type": "application/json" },
+  //   method: "POST",
+  //   body: JSON.stringify(data),
+  // });
 }
