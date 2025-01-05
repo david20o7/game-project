@@ -1,9 +1,10 @@
 const express = require("express"); //import express
 const SQL = require("sqlite3").verbose(); // import sqlite3
 const path = require("path");
-
+const session = require("express-session");
 const livereload = require("livereload");
 const connectLivereload = require("connect-livereload");
+const bcrypt = require("bcrypt");
 
 // Set up LiveReload server
 const liveReloadServer = livereload.createServer();
@@ -16,19 +17,43 @@ const PORT = 3000;
 const Database_Name = "my-database.db";
 const db = new SQL.Database(Database_Name);
 
-// app.use(express.urlencoded({ extended: true }));
+const saltRounds = 10;
+
+// copied
+app.use(
+  session({
+    secret: "your_session_secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
 
 app.use(connectLivereload());
 app.use(express.json());
 
-// Serve static files from the 'public' direcladtory
-app.use(express.static(path.join(__dirname, "public", "movement")));
+// Middleware to test if authenticated
+const isAuthenticated = (req, res, next) => {
+  // console.log(req.session.user);
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect("/accounts"); // Redirect to /accounts if not authenticated
+  }
+};
 
-// Serve static files from the 'public' directory
+// Serve static files from 'public/movement'
+app.use("/movement", isAuthenticated, express.static(path.join(__dirname, "public", "movement")));
+
+// Serve static files from 'public'
 app.use(express.static("public"));
 
+app.get("/", (req, res) => {
+  res.redirect("/accounts"); // Redirect to /accounts if not authenticated
+});
+
 // TODO: change this to work with the game_data instead
-app.get("/users", (req, res) => {
+app.get("/users", (req, res, next) => {
   // Run a query where we want to process the output
   db.all("SELECT * FROM user ORDER BY score DESC;", (error, rows) => {
     if (error) {
@@ -92,19 +117,43 @@ app.post("/login", (req, res) => {
     return;
   }
 
-  db.get(
-    "SELECT * FROM account WHERE username = ? AND password = ?",
-    [username, password],
-    (error, row) => {
-      if (error) {
-        res.status(500).send("Invalid username or password.");
-      } else if (row) {
-        res.status(200).send("Login successful!");
-      } else {
+  db.get("SELECT * FROM account WHERE username = ?", [username], (error, row) => {
+    if (error) {
+      res.status(500).send("Invalid username or password.");
+    } else if (row) {
+      // Load hash from your password DB.
+      const isPasswordCorrect = bcrypt.compareSync(password, row.password);
+
+      if (!isPasswordCorrect) {
         res.status(401).send("Invalid username or password.");
       }
+
+      // COPIED: https://github.com/expressjs/session?tab=readme-ov-file#user-login
+      req.session.regenerate((err) => {
+        if (err) next(err);
+
+        // store user information in session, typically a user id
+        req.session.user = username;
+        req.session.save((err) => {
+          if (err) {
+            res.status(500).send("something wrong with the session");
+          } else {
+            res.status(200).send("Login successful!");
+          }
+        });
+      });
+    } else {
+      res.status(401).send("Invalid username or password.");
     }
-  );
+  });
+});
+
+app.get("/logout", (req, res) => {
+  req.session.user = null;
+  req.session.destroy();
+
+  // TODO: Add 'logout successful' message
+  res.redirect("/accounts");
 });
 
 app.post("/register", (req, res) => {
@@ -116,17 +165,23 @@ app.post("/register", (req, res) => {
     return;
   }
 
-  db.all(
-    "INSERT INTO account (username, password) VALUES(?, ?)",
-    [username, password],
-    (error, result) => {
-      if (error) {
-        res.status(409).send("username exists");
-      } else {
-        res.send(201).send();
+  // COPIED: https://github.com/kelektiv/node.bcrypt.js?tab=readme-ov-file#usage
+
+  bcrypt.hash(password, saltRounds, function (err, hash) {
+    // Store hash in your password DB.
+
+    db.all(
+      "INSERT INTO account (username, password) VALUES(?, ?)",
+      [username, hash],
+      (error, result) => {
+        if (error) {
+          res.status(409).send("username exists");
+        } else {
+          res.send(201).send();
+        }
       }
-    }
-  );
+    );
+  });
 });
 
 app.listen(PORT, () => {

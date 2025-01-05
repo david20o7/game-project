@@ -18,9 +18,17 @@
   </head>
 
   <body>
+    <button type="button" class="backButton">
+      <a href="/logout">LOG OUT</a>
+    </button>
+
     <div id="startGameScreen" class="overlay">
+      <!-- <button type="button" class="backButton">
+        <a href="/logout">LOG OUT</a>
+      </button> -->
       <div id="startGameScreenBox" class="overlayBox">
         <span class="bigText">Game Title</span>
+
         <!-- <span class="smallText">enter your name here</span> -->
         <input type="text" id="username" placeholder="enter your name here" autocomplete="off" />
         <span id="startGameButton" class="smallText disabled"

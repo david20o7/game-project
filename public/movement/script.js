@@ -17,7 +17,7 @@ if (isValid(username.value)) {
 }
 
 username.addEventListener("input", (e) => {
-  const name = e.target.value;
+  const name = e.target.value.toUpperCase();
 
   if (isValid(name)) {
     startGameButton.classList.remove(["disabled"]);

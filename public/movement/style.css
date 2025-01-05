@@ -171,3 +171,22 @@ git push --force .keyboardKey {
   text-align: center;
   font-family: "Silkscreen", sans-serif;
 }
+
+.backButton {
+  font-family: "Silkscreen", sans-serif;
+  background-color: rgb(106, 0, 0);
+  color: white;
+  font-size: 14px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 10px;
+  z-index: 9999;
+}
+.backButton a {
+  color: white;
+}

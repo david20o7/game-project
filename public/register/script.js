@@ -42,7 +42,7 @@ registerButton.addEventListener("click", (event) => {
     } else if (res.status === 409) {
       serverMessageText.style.setProperty("display", "block");
       serverMessageText.style.setProperty("color", "red");
-      serverMessageText.innerHTML = "Error: Invalid / Already exists";
+      serverMessageText.innerHTML = "Error: Invalid / Username taken";
     }
   });
 });
