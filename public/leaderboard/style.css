@@ -43,3 +43,14 @@ tbody tr:hover {
   text-align: center;
   margin-top: 50px;
 }
+
+button {
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  color: black;
+  font-family: "Silkscreen", sans-serif;
+  width: 100px;
+}

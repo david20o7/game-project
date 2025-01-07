@@ -7,6 +7,7 @@ const fetchUsers = () => {
     })
     .then((response) => {
       leaderboardTable.innerHTML = "";
+      console.log(response);
 
       let position = 1;
 
@@ -22,12 +23,12 @@ const fetchUsers = () => {
 
         const username = document.createElement("td");
         username.setAttribute("class", "textColour");
-        username.innerText = user.name;
+        username.innerText = user.character_name;
         row.append(username);
 
         const score = document.createElement("td");
         score.setAttribute("class", "textColour");
-        score.innerText = user.score;
+        score.innerText = user.high_score;
         row.append(score);
 
         leaderboardTable.append(row);

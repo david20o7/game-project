@@ -34,7 +34,6 @@ app.use(express.json());
 
 // Middleware to test if authenticated
 const isAuthenticated = (req, res, next) => {
-  // console.log(req.session.user);
   if (req.session.user) {
     next();
   } else {
@@ -55,7 +54,7 @@ app.get("/", (req, res) => {
 // TODO: change this to work with the game_data instead
 app.get("/users", (req, res, next) => {
   // Run a query where we want to process the output
-  db.all("SELECT * FROM user ORDER BY score DESC;", (error, rows) => {
+  db.all("SELECT * FROM game_data ORDER BY high_score DESC;", (error, rows) => {
     if (error) {
       res.status(500).send("An error occurred while querying the database");
       console.error("Database query error: ", error);
@@ -67,7 +66,6 @@ app.get("/users", (req, res, next) => {
       return;
     }
 
-    // array of stuff like {"id":7,"name":"Fiona Fionason","score":400}
     res.json(rows);
   });
 });
@@ -75,19 +73,31 @@ app.get("/users", (req, res, next) => {
 // adding the score to the DB
 // TODO: change this to work with the user
 app.post("/submitScore", (req, res) => {
-  const { score, username } = req.body;
+  const userData = req.session.user; // an entire row from the accounts table
+  const userId = userData.user_id;
+  const { high_score } = req.body;
 
-  db.get(`SELECT * FROM user WHERE name = ?`, [username], (err, result) => {
-    if (result === undefined) {
-      db.run("INSERT INTO user (name, score) VALUES(?, ?)", [username, score]);
-    } else {
-      if (result.score < score) {
-        db.run("UPDATE user SET score = ? WHERE name = ?", [score, username]);
-      }
-    }
-  });
+  db.run(`UPDATE game_data SET high_score = ? WHERE user_id = ? `, [high_score, userId]);
+
+  // db.get(`SELECT * FROM user WHERE name = ?`, [username], (err, result) => {
+  //   if (result === undefined) {
+  //     db.run("INSERT INTO user (name, score) VALUES(?, ?)", [username, score]);
+  //   } else {
+  //     if (result.score < score) {
+  //       db.run("UPDATE user SET score = ? WHERE name = ?", [score, username]);
+  //     }
+  //   }
+  // });
 
   res.send();
+});
+
+app.get("/getGameData", (req, res) => {
+  const userData = req.session.user; // an entire row from the accounts table
+  const userId = userData.user_id;
+  db.get(`SELECT * FROM game_data WHERE user_id = ?`, [userId], (err, result) => {
+    res.json(result || {});
+  });
 });
 
 app.get("/userHighScore", (req, res) => {
@@ -133,7 +143,7 @@ app.post("/login", (req, res) => {
         if (err) next(err);
 
         // store user information in session, typically a user id
-        req.session.user = username;
+        req.session.user = row;
         req.session.save((err) => {
           if (err) {
             res.status(500).send("something wrong with the session");
@@ -156,32 +166,46 @@ app.get("/logout", (req, res) => {
   res.redirect("/accounts");
 });
 
-app.post("/register", (req, res) => {
-  // do something
+app.post("/register", async (req, res) => {
   const { password, username } = req.body;
 
   if (username.length === 0 || password.length === 0) {
-    res.status(409).send("invalid / already exists");
+    res.status(409).send("Invalid username or password");
     return;
   }
 
   // COPIED: https://github.com/kelektiv/node.bcrypt.js?tab=readme-ov-file#usage
+  const hash = bcrypt.hashSync(password, saltRounds);
 
-  bcrypt.hash(password, saltRounds, function (err, hash) {
-    // Store hash in your password DB.
+  const createGameData = (error, row) => {
+    if (!row || error) {
+      res.status(409).send("Cannot find account");
+    } else {
+      const { user_id, username } = row;
 
-    db.all(
-      "INSERT INTO account (username, password) VALUES(?, ?)",
-      [username, hash],
-      (error, result) => {
-        if (error) {
-          res.status(409).send("username exists");
-        } else {
-          res.send(201).send();
+      db.run(
+        "INSERT INTO game_data (user_id, character_name, high_score) VALUES(?, ?, ?)",
+        [user_id, username, 0],
+        (error) => {
+          if (error) {
+            res.status(409).send("Cannot insert user info into leaderboard");
+          } else {
+            res.status(201).send();
+          }
         }
-      }
-    );
-  });
+      );
+    }
+  };
+
+  const findNewUser = (error) => {
+    if (error) {
+      res.status(409).send("username exists");
+    } else {
+      db.get("SELECT * FROM account WHERE username = ?", [username], createGameData);
+    }
+  };
+
+  db.run("INSERT INTO account (username, password) VALUES(?, ?)", [username, hash], findNewUser);
 });
 
 app.listen(PORT, () => {
@@ -195,3 +219,17 @@ liveReloadServer.server.once("connection", () => {
     liveReloadServer.refresh("/");
   }, 100);
 });
+
+class DatabaseThing {
+  run(query, arrayOfVariablesForQuery, someFunction) {
+    let error = null;
+    // does some magic to run the query with the variables in the database
+
+    // if there is some error with the query,
+    error = "something";
+
+    someFunction(error);
+  }
+}
+
+const deeBee = new DatabaseThing();

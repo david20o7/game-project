@@ -65,12 +65,12 @@ export class Game {
     this.onGameRestart();
   }
 
-  /**
-   * - creates a chaser of a random size
-   * - gives the chaser a speed inversely proportional to its size
-   * - chaser speed then adjusted for difficulty
-   * - random color also selected for chaser
-   * - chaser placed somewhere on the edge of the play area
+  /*
+   - creates a chaser of a random size
+  - gives the chaser a speed inversely proportional to its size
+    - chaser speed then adjusted for difficulty
+   - random color also selected for chaser
+   - chaser placed somewhere on the edge of the play area
    */
   createChaser() {
     const chaserSize = getRandomSize();

@@ -23,7 +23,7 @@ loginButton.addEventListener("click", (event) => {
       serverMessageText.style.setProperty("display", "block");
       serverMessageText.style.setProperty("color", "green");
       serverMessageText.innerHTML = "Login successful!";
-      window.location.href = "/movement";
+      window.location.href = `/movement?username=${username}`;
     } else if (status >= 400 && status < 500) {
       serverMessageText.style.setProperty("display", "block");
       serverMessageText.style.setProperty("color", "red");

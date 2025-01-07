@@ -17,7 +17,7 @@ const gameOverMessage = document.querySelector("#gameOverMessage");
 // }
 
 // TODO: update game over text
-gameOverMessage.innerText = `Sorry ${name} you have died`;
+gameOverMessage.innerText = `Sorry, you have died`;
 
 // username.addEventListener("input", (e) => {
 //   const name = e.target.value.toUpperCase();
@@ -31,20 +31,16 @@ gameOverMessage.innerText = `Sorry ${name} you have died`;
 
 // TODO: add start game button in the game screen
 startGameButton.addEventListener("click", () => {
-  startGameScreen.style.setProperty("display", "none");
-  localStorage.setItem("highestScore", "0");
-  beginGame();
+  fetch(`/getGameData`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((response) => {
+      startGameScreen.style.setProperty("display", "none");
 
-  // TODO: use the game_data table to get the high score from
-  // fetch(`/userHighScore?username=${username.value}`)
-  //   .then((response) => {
-  //     return response.json();
-  //   })
-  //   .then((response) => {
-  //     startGameScreen.style.setProperty("display", "none");
-  //     localStorage.setItem("highestScore", `${response?.score || 0}`);
-  //     localStorage.setItem("name", username.value);
-  //   });
+      localStorage.setItem("highestScore", `${response.high_score}`);
+      beginGame();
+    });
 });
 
 function beginGame() {
@@ -83,16 +79,13 @@ function beginGame() {
 }
 
 function submitHighScore() {
-  // TODO: update to use the new endpoint (probably)
-  // const name = username.value;
-  // const highestScore = localStorage.getItem("highestScore");
-  // const data = {
-  //   username: name,
-  //   score: highestScore,
-  // };
-  // fetch("/submitScore", {
-  //   headers: { "Content-Type": "application/json" },
-  //   method: "POST",
-  //   body: JSON.stringify(data),
-  // });
+  const highestScore = localStorage.getItem("highestScore");
+  const data = {
+    high_score: highestScore,
+  };
+  fetch("/submitScore", {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }

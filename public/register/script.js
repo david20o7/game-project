@@ -42,6 +42,8 @@ registerButton.addEventListener("click", (event) => {
     } else if (res.status === 409) {
       serverMessageText.style.setProperty("display", "block");
       serverMessageText.style.setProperty("color", "red");
+
+      // TODO: show the server error instead
       serverMessageText.innerHTML = "Error: Invalid / Username taken";
     }
   });
