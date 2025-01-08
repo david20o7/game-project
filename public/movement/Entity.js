@@ -7,7 +7,7 @@ export class Entity {
     position: [100, 100],
     size: 5,
     speed: 1,
-    color: [255, 0, 0],
+    color: [255, 0, 0], // null
   };
 
   element = document.createElement("div");
@@ -57,7 +57,10 @@ export class Entity {
 
     this._updateElementSize();
     this._drawElementPosition();
-    this.element.style.setProperty("background-color", `rgb(${this.state.color.join(",")})`);
+
+    if (!this.state.color === null) {
+      this.element.style.setProperty("background-color", `rgb(${this.state.color.join(",")})`);
+    }
   }
 
   updateSpeed(speed) {
@@ -98,13 +101,6 @@ export class Entity {
   getPosition() {
     return this.state.position;
   }
-
-  /**
-   * ________
-   * |      |
-   * |  X   |
-   * |______|
-   */
 
   // gets finds left, right, up and down of player
   getBounds() {
