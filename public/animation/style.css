@@ -1,0 +1,49 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+
+.slime-idle {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  background-image: url("sprites/slime-idle-0.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: idle-animation 1s steps(4) infinite;
+}
+
+@keyframes idle-animation {
+  0% {
+    background-image: url("sprites/slime-idle-0.png");
+  }
+  25% {
+    background-image: url("sprites/slime-idle-1.png");
+  }
+  50% {
+    background-image: url("sprites/slime-idle-2.png");
+  }
+  75% {
+    background-image: url("sprites/slime-idle-3.png");
+  }
+  100% {
+    background-image: url("sprites/slime-idle-0.png");
+  }
+}
+
+.other-square {
+  width: 100px;
+  height: 100px;
+  background-color: lightblue;
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* .slime-animation-idle-0 {
+  background-image: url("sprites/slime-idle-0.png");
+} */

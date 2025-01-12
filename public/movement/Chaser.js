@@ -20,6 +20,7 @@ export class Chaser extends Entity {
   _initEntity() {
     super._initEntity();
     this.element.append(this.healthBar.healthContainer);
+    this.moveAnimation();
   }
 
   updateChaserPosition(playerPosition) {

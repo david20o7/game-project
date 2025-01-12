@@ -7,8 +7,10 @@ const serverMessageText = document.getElementById("serverMessage");
 registerButton.addEventListener("click", (event) => {
   event.preventDefault();
 
-  const username = usernameInput.value;
+  const username = usernameInput.value.toUpperCase();
   const password = passwordInput.value;
+
+  console.log(username);
 
   const data = { username: username, password: password };
 

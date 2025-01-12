@@ -1,13 +1,29 @@
 import { clamp } from "./utilities.js";
 
+const spritesIdle = [
+  "sprites/slime-idle-0.png",
+  "sprites/slime-idle-1.png",
+  "sprites/slime-idle-2.png",
+  "sprites/slime-idle-3.png",
+];
+const spritesMove = [
+  "sprites/slime-move-0.png",
+  "sprites/slime-move-1.png",
+  "sprites/slime-move-2.png",
+  "sprites/slime-move-3.png",
+];
+
 export class Entity {
   hasInit = false;
+  animationId = null;
+  isMoving = false;
+
   state = {
     elementId: undefined,
     position: [100, 100],
     size: 5,
     speed: 1,
-    color: [255, 0, 0],
+    color: [255, 0, 0], // or null
   };
 
   element = document.createElement("div");
@@ -29,6 +45,9 @@ export class Entity {
   _initEntity() {
     this.element.setAttribute("id", this.state.elementId);
     this.element.style.setProperty("position", "absolute");
+
+    this.element.style.setProperty("background-size", "contain");
+    this.element.style.setProperty("background-repeat", "no-repeat");
   }
 
   _drawElementPosition() {
@@ -57,7 +76,10 @@ export class Entity {
 
     this._updateElementSize();
     this._drawElementPosition();
-    this.element.style.setProperty("background-color", `rgb(${this.state.color.join(",")})`);
+
+    if (!(this.state.color === null)) {
+      this.element.style.setProperty("background-color", `rgb(${this.state.color.join(",")})`);
+    }
   }
 
   updateSpeed(speed) {
@@ -99,13 +121,6 @@ export class Entity {
     return this.state.position;
   }
 
-  /**
-   * ________
-   * |      |
-   * |  X   |
-   * |______|
-   */
-
   // gets finds left, right, up and down of player
   getBounds() {
     return {
@@ -114,5 +129,37 @@ export class Entity {
       top: this.state.position[1] + this.state.size / 2,
       bottom: this.state.position[1] - this.state.size / 2,
     };
+  }
+
+  animateSquare(spriteList) {
+    let currentFrame = 0;
+
+    clearInterval(this.animationId);
+
+    this.animationId = setInterval(() => {
+      this.element.style.backgroundImage = `url(${spriteList[currentFrame]})`;
+      currentFrame = (currentFrame + 1) % spriteList.length;
+    }, 100);
+  }
+
+  moveAnimation() {
+    this.animateSquare(spritesMove);
+  }
+
+  idleAnimation() {
+    this.animateSquare(spritesIdle);
+  }
+
+  updateAnimation() {
+    if (this.isMoving) {
+      this.moveAnimation();
+    } else {
+      this.idleAnimation();
+    }
+  }
+
+  stopAnimation() {
+    clearInterval(this.animationId);
+    this.animationId = null;
   }
 }

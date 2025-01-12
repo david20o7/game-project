@@ -81,9 +81,10 @@ export class Game {
 
     const newChaser = new Chaser(this.arenaDims, {
       speed: speedIncrease,
-      color: getRandomColour(),
+      // color: getRandomColour(),
+      color: null,
       position: getRandomEdge(this.arenaDims),
-      size: chaserSize,
+      size: chaserSize + 10,
     });
 
     this.gameArena.append(newChaser.getElement());
