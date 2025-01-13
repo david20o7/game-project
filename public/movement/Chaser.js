@@ -1,8 +1,22 @@
 import { Entity } from "./Entity.js";
 import { HealthBar } from "./HealthBar.js";
 
+const spritesIdle = [
+  "sprites/slime-idle-0.png",
+  "sprites/slime-idle-1.png",
+  "sprites/slime-idle-2.png",
+  "sprites/slime-idle-3.png",
+];
+const spritesMove = [
+  "sprites/slime-move-0.png",
+  "sprites/slime-move-1.png",
+  "sprites/slime-move-2.png",
+  "sprites/slime-move-3.png",
+];
+
 export class Chaser extends Entity {
   hasImmunity = false;
+  isGoingRight = false;
 
   constructor(arenaDims, initialState) {
     super(arenaDims, {
@@ -41,6 +55,7 @@ export class Chaser extends Entity {
       down = true;
     }
 
+    this.changeDirection(right);
     this.move(left, right, up, down);
   }
 
@@ -64,5 +79,28 @@ export class Chaser extends Entity {
   draw() {
     super.draw();
     this.healthBar.draw();
+  }
+
+  moveAnimation() {
+    this.animateSquare(spritesMove);
+  }
+
+  idleAnimation() {
+    this.animateSquare(spritesIdle);
+  }
+
+  changeDirection(isGoingRight) {
+    this.goingRight = isGoingRight;
+
+    if (this.goingRight === true) {
+      this.element.style.setProperty("transform", "scaleX(-1)");
+    } else {
+      this.element.style.removeProperty("transform");
+    }
+  }
+
+  remove() {
+    this.element.remove();
+    this.stopAnimation();
   }
 }

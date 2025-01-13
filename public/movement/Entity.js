@@ -1,18 +1,5 @@
 import { clamp } from "./utilities.js";
 
-const spritesIdle = [
-  "sprites/slime-idle-0.png",
-  "sprites/slime-idle-1.png",
-  "sprites/slime-idle-2.png",
-  "sprites/slime-idle-3.png",
-];
-const spritesMove = [
-  "sprites/slime-move-0.png",
-  "sprites/slime-move-1.png",
-  "sprites/slime-move-2.png",
-  "sprites/slime-move-3.png",
-];
-
 export class Entity {
   hasInit = false;
   animationId = null;
@@ -140,22 +127,6 @@ export class Entity {
       this.element.style.backgroundImage = `url(${spriteList[currentFrame]})`;
       currentFrame = (currentFrame + 1) % spriteList.length;
     }, 100);
-  }
-
-  moveAnimation() {
-    this.animateSquare(spritesMove);
-  }
-
-  idleAnimation() {
-    this.animateSquare(spritesIdle);
-  }
-
-  updateAnimation() {
-    if (this.isMoving) {
-      this.moveAnimation();
-    } else {
-      this.idleAnimation();
-    }
   }
 
   stopAnimation() {

@@ -34,6 +34,7 @@ class MiniChaser {
 
   // start: ignore this
   animationId;
+  goingRight = false;
   // end: ignore this
 
   constructor() {
@@ -59,18 +60,44 @@ class MiniChaser {
   idle() {
     this.animateSquare(spritesIdle);
   }
+
+  changeDirection(isGoingRight) {
+    this.goingRight = isGoingRight;
+
+    if (this.goingRight === true) {
+      this.element.style.setProperty("transform", "scaleX(-1)");
+    } else {
+      this.element.style.removeProperty("transform");
+    }
+  }
 }
 
-const elsie = new MiniChaser();
-body.append(elsie.element);
-elsie.move();
-// let isMoving = true;
-// setInterval(() => {
-//   if (isMoving) {
-//     elsie.idle();
-//     isMoving = false;
-//   } else {
-//     elsie.move();
-//     isMoving = true;
-//   }
-// }, 2000);
+const meow = new MiniChaser();
+
+// Math.floor(Math.random() * 11)
+// Math.floor(Math.random() * 11) + 10;
+
+//DOM = html file thingy
+/**
+ * KNOWLEDGE:
+ * 1. To stop an animation, use clearInterval
+ * 2. To remove an element from the DOM, use element.remove()
+ * 3. Math.random() generates a random number between 0 and 1 (will never be 0, will never be 1)
+ *    - Math.random() * 10 = A random number between 0. something and 9. something (never 0, never 10)
+ *    - Math.floor(number) rounds the number DOWN
+ *    - Math.floor(Math.random() * 11) + 10; generates a random INTEGER between 10 and 20
+ */
+
+// Create 20 chasers
+// Have them exist for a random duration between 3 and 10 seconds
+// When the chaser dies, stop the animation and remove the element from the DOM
+// -- when doing that, make sure that you create a method on the Chaser class which handles the removal for you.
+// after that, move all animation logic in a separate base class, which MiniChaser inherits.
+
+// Things to learn:
+// Explain what the MiniChaser c
+// what the DOM is
+// the difference between class instance and Class
+// How to call a method on an instance, and how to call a method on the class
+// -- WHY you would call a method on the instance, and WHY you would call a class method.
+// the different ways you can create a function in javascript

@@ -110,7 +110,7 @@ export class Game {
 
     for (let i = 0; i < this.gameState.chasers.length; i++) {
       const selectedChaser = this.gameState.chasers[i];
-      selectedChaser.element.remove();
+      selectedChaser.remove();
     }
   }
 
@@ -146,7 +146,7 @@ export class Game {
       if (hitByAttack) {
         selectedChaser.getHit();
         if (selectedChaser.chaserDead()) {
-          selectedChaser.element.remove();
+          selectedChaser.remove();
           this.gameState.chasers.splice(i, 1);
           this.updateScore(5);
         }

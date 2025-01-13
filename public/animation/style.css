@@ -42,6 +42,7 @@ body {
   background-size: 100%;
   background-position: center;
   background-repeat: no-repeat;
+  /* transform: scaleX(-1); */
 }
 
 /* .slime-animation-idle-0 {
