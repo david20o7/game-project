@@ -29,13 +29,9 @@ const spritesMove = [
   "sprites/slime-move-3.png",
 ];
 
-class MiniChaser {
+class BaseChaser {
   element = document.createElement("div");
-
-  // start: ignore this
   animationId;
-  goingRight = false;
-  // end: ignore this
 
   constructor() {
     this.element.classList.add("other-square");
@@ -53,12 +49,28 @@ class MiniChaser {
     }, 100);
   }
 
+  removeChaser() {
+    clearInterval(this.animationId);
+    this.element.remove();
+  }
+}
+
+class MiniChaser extends BaseChaser {
+  goingRight = false;
+
+  /**
+   * @returns void
+   */
   move() {
     this.animateSquare(spritesMove);
   }
 
   idle() {
     this.animateSquare(spritesIdle);
+  }
+
+  static main() {
+    console.log("called main!!!");
   }
 
   changeDirection(isGoingRight) {
@@ -72,7 +84,32 @@ class MiniChaser {
   }
 }
 
-const meow = new MiniChaser();
+const chaserList = [];
+
+const chaser = new MiniChaser();
+body.append(chaser.element);
+chaser.move();
+
+MiniChaser.main();
+
+// function createChaser() {
+//   for (let i = 0; i < 20; i++) {
+//     const chaser = new MiniChaser();
+//     chaserList.push(chaser);
+//     body.append(chaser.element);
+//     chaser.move();
+
+//     chaser.
+
+//     const lifeTime = Math.floor(Math.random() * 8000) + 3000;
+
+//     setTimeout(() => {
+//       chaser.removeChaser();
+//     }, lifeTime);
+//   }
+// }
+
+// createChaser();
 
 // Math.floor(Math.random() * 11)
 // Math.floor(Math.random() * 11) + 10;
@@ -88,16 +125,15 @@ const meow = new MiniChaser();
  *    - Math.floor(Math.random() * 11) + 10; generates a random INTEGER between 10 and 20
  */
 
-// Create 20 chasers
-// Have them exist for a random duration between 3 and 10 seconds
-// When the chaser dies, stop the animation and remove the element from the DOM
+// DONE: Create 20 chasers
+// DONE: Have them exist for a random duration between 3 and 10 seconds
+// DONE: When the chaser dies, stop the animation and remove the element from the DOM
 // -- when doing that, make sure that you create a method on the Chaser class which handles the removal for you.
 // after that, move all animation logic in a separate base class, which MiniChaser inherits.
 
 // Things to learn:
-// Explain what the MiniChaser c
 // what the DOM is
-// the difference between class instance and Class
-// How to call a method on an instance, and how to call a method on the class
+// DONE: the difference between class instance and Class
+// DONE: How to call a method on an instance, and how to call a method on the class
 // -- WHY you would call a method on the instance, and WHY you would call a class method.
 // the different ways you can create a function in javascript
