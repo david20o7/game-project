@@ -1,12 +1,6 @@
 import { Entity } from "./Entity.js";
 import { HealthBar } from "./HealthBar.js";
 
-const spritesIdle = [
-  "sprites/slime-idle-0.png",
-  "sprites/slime-idle-1.png",
-  "sprites/slime-idle-2.png",
-  "sprites/slime-idle-3.png",
-];
 const spritesMove = [
   "sprites/slime-move-0.png",
   "sprites/slime-move-1.png",
@@ -83,10 +77,6 @@ export class Chaser extends Entity {
 
   moveAnimation() {
     this.animateSquare(spritesMove);
-  }
-
-  idleAnimation() {
-    this.animateSquare(spritesIdle);
   }
 
   changeDirection(isGoingRight) {

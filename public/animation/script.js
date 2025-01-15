@@ -16,6 +16,27 @@
 
 const body = document.body;
 
+const wizardMove = [
+  "sprites/wizard/walk-0.png",
+  "sprites/wizard/walk-1.png",
+  "sprites/wizard/walk-2.png",
+  "sprites/wizard/walk-3.png",
+  "sprites/wizard/walk-4.png",
+  "sprites/wizard/walk-5.png",
+  "sprites/wizard/walk-6.png",
+  "sprites/wizard/walk-7.png",
+  "sprites/wizard/walk-8.png",
+  "sprites/wizard/walk-9.png",
+];
+
+const wizardAttack = [
+  "sprites/wizard/attack-5.png",
+  "sprites/wizard/attack-6.png",
+  "sprites/wizard/attack-7.png",
+  "sprites/wizard/attack-8.png",
+  "sprites/wizard/attack-9.png",
+];
+
 const spritesIdle = [
   "sprites/slime-idle-0.png",
   "sprites/slime-idle-1.png",
@@ -37,16 +58,14 @@ class BaseChaser {
     this.element.classList.add("other-square");
   }
 
-  // this. keyword doesn't work in static methods
-  animateSquare(spriteList) {
+  animateSquare(spriteList, animateSpeed = 100) {
     let currentFrame = 0;
-
     clearInterval(this.animationId);
 
     this.animationId = setInterval(() => {
       this.element.style.backgroundImage = `url(${spriteList[currentFrame]})`;
       currentFrame = (currentFrame + 1) % spriteList.length;
-    }, 100);
+    }, animateSpeed);
   }
 
   removeChaser() {
@@ -58,11 +77,16 @@ class BaseChaser {
 class MiniChaser extends BaseChaser {
   goingRight = false;
 
-  /**
-   * @returns void
-   */
   move() {
     this.animateSquare(spritesMove);
+  }
+
+  wizardMove() {
+    this.animateSquare(wizardMove, 50);
+  }
+
+  wizardAttack() {
+    this.animateSquare(wizardAttack);
   }
 
   idle() {
@@ -87,10 +111,21 @@ class MiniChaser extends BaseChaser {
 const chaserList = [];
 
 const chaser = new MiniChaser();
-body.append(chaser.element);
-chaser.move();
 
-MiniChaser.main();
+body.append(chaser.element);
+
+let attacking = false;
+chaser.wizardMove();
+setInterval(() => {
+  if (attacking) {
+    chaser.wizardMove();
+    attacking = false;
+  } else {
+    chaser.wizardAttack();
+    attacking = true;
+  }
+}, 2000);
+chaser.wizardAttack();
 
 // function createChaser() {
 //   for (let i = 0; i < 20; i++) {

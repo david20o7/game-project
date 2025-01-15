@@ -118,7 +118,7 @@ export class Entity {
     };
   }
 
-  animateSquare(spriteList) {
+  animateSquare(spriteList, spriteSpeed = 100) {
     let currentFrame = 0;
 
     clearInterval(this.animationId);
@@ -126,7 +126,7 @@ export class Entity {
     this.animationId = setInterval(() => {
       this.element.style.backgroundImage = `url(${spriteList[currentFrame]})`;
       currentFrame = (currentFrame + 1) % spriteList.length;
-    }, 100);
+    }, spriteSpeed);
   }
 
   stopAnimation() {

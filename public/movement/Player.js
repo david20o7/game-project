@@ -3,9 +3,31 @@ import { AreaAttack } from "./AreaAttack.js";
 import { Stamina } from "./Stamina.js";
 import { HealthBar } from "./HealthBar.js";
 
+const wizardMove = [
+  "sprites/wizard/walk-0.png",
+  "sprites/wizard/walk-1.png",
+  "sprites/wizard/walk-2.png",
+  "sprites/wizard/walk-3.png",
+  "sprites/wizard/walk-4.png",
+  "sprites/wizard/walk-5.png",
+  "sprites/wizard/walk-6.png",
+  "sprites/wizard/walk-7.png",
+  "sprites/wizard/walk-8.png",
+  "sprites/wizard/walk-9.png",
+];
+
+const wizardAttack = [
+  "sprites/wizard/attack-5.png",
+  "sprites/wizard/attack-6.png",
+  "sprites/wizard/attack-7.png",
+  "sprites/wizard/attack-8.png",
+  "sprites/wizard/attack-9.png",
+];
+
 export class Player extends Entity {
   // defines some inits
   hasImmunity = false;
+  isGoingRight = false;
 
   attack = new AreaAttack();
   stamina = new Stamina();
@@ -55,6 +77,7 @@ export class Player extends Entity {
     if (keysPressed[" "]) {
       this.attack.doAttack();
     }
+    this.changeDirection(right);
 
     this.sprint(keysPressed["Shift"] && Object.keys(keysPressed).length > 1);
 
@@ -114,5 +137,22 @@ export class Player extends Entity {
       value: this.stamina.getStamina(),
       colour: this.stamina.getStaminaColour(),
     };
+  }
+  moveAnimation() {
+    this.animateSquare(wizardMove);
+  }
+
+  attackAnimation() {
+    this.animateSquare(wizardAttack);
+  }
+
+  changeDirection(isGoingRight) {
+    this.goingRight = isGoingRight;
+
+    if (this.goingRight === true) {
+      this.element.style.setProperty("transform", "scaleX(-1)");
+    } else {
+      this.element.style.removeProperty("transform");
+    }
   }
 }
