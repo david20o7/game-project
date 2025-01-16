@@ -8,7 +8,7 @@ export class AreaAttack {
     borderColor: [255, 255, 255],
     opacity: 1,
 
-    maxRadius: 120,
+    maxRadius: 200,
 
     expandSpeed: 0.05,
     attacking: false,

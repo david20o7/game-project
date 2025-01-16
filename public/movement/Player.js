@@ -16,6 +16,8 @@ const wizardMove = [
   "sprites/wizard/walk-9.png",
 ];
 
+const wizardStill = ["sprites/wizard/walk-0.png", "sprites/wizard/walk-9.png"];
+
 const wizardAttack = [
   "sprites/wizard/attack-5.png",
   "sprites/wizard/attack-6.png",
@@ -24,10 +26,17 @@ const wizardAttack = [
   "sprites/wizard/attack-9.png",
 ];
 
+const MOVING = "moving";
+const IDLE = "idle";
+const ATTACKING = "attacking";
+const SPRINTING = "sprint";
+
 export class Player extends Entity {
   // defines some inits
   hasImmunity = false;
-  isGoingRight = false;
+  isGoingLeft = false;
+
+  animationState = "idle";
 
   attack = new AreaAttack();
   stamina = new Stamina();
@@ -36,8 +45,9 @@ export class Player extends Entity {
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [400, 400],
-      size: 25,
-      color: [233, 180, 194],
+      size: 75,
+      // color: [233, 180, 194],
+      color: null,
       elementId: "player",
       speed: 2,
       walkingSpeed: 2,
@@ -55,6 +65,7 @@ export class Player extends Entity {
   _initEntity() {
     super._initEntity();
     this.element.append(this.healthBar.healthContainer);
+    this.idleAnimation();
   }
 
   // movement logic
@@ -76,24 +87,53 @@ export class Player extends Entity {
     // attack logic
     if (keysPressed[" "]) {
       this.attack.doAttack();
+      this.isAttacking = true;
     }
-    this.changeDirection(right);
 
-    this.sprint(keysPressed["Shift"] && Object.keys(keysPressed).length > 1);
+    const trySprint = !!keysPressed["Shift"] && Object.keys(keysPressed).length > 1;
+    this.sprint(trySprint);
 
     const position = this.move(left, right, up, down);
 
     this.attack.updatePosition(position);
+
+    // animation stuff
+
+    const standingStill = !left && !right && !up && !down;
+
+    if (standingStill && this.animationState !== IDLE) {
+      this.idleAnimation();
+      this.animationState = IDLE;
+    } else if (
+      !standingStill &&
+      this.animationState !== MOVING &&
+      this.animationState !== SPRINTING
+    ) {
+      this.moveAnimation();
+      this.animationState = MOVING;
+    }
+    if (left !== right) {
+      this.changeDirection(left);
+    }
+
+    console.log({ animationState: this.animationState });
   }
   // if user is sprinting and has enough stamina, the speed is set to sprinting speed
   // otherwise, the speed is set to walking speed.
-  sprint(isSprinting) {
-    this.stamina.useStamina(isSprinting);
+  sprint(trySprinting) {
+    this.stamina.useStamina(trySprinting);
     const canSprint = this.stamina.canUseStamina();
 
-    this.updateSpeed(
-      canSprint && isSprinting ? this.state.sprintingSpeed : this.state.walkingSpeed
-    );
+    const shouldSprint = canSprint && trySprinting;
+    this.updateSpeed(shouldSprint ? this.state.sprintingSpeed : this.state.walkingSpeed);
+
+    if (shouldSprint && this.animationState !== SPRINTING) {
+      this.sprintAnimation();
+      this.animationState = SPRINTING;
+    } else if (!shouldSprint && this.animationState === SPRINTING) {
+      this.moveAnimation();
+      this.animationState = MOVING;
+    }
   }
 
   getHit() {
@@ -146,10 +186,18 @@ export class Player extends Entity {
     this.animateSquare(wizardAttack);
   }
 
-  changeDirection(isGoingRight) {
-    this.goingRight = isGoingRight;
+  idleAnimation() {
+    this.animateSquare(wizardStill, 500);
+  }
 
-    if (this.goingRight === true) {
+  sprintAnimation() {
+    this.animateSquare(wizardMove, 50);
+  }
+
+  changeDirection(isGoingLeft) {
+    this.isGoingLeft = isGoingLeft;
+
+    if (this.isGoingLeft === true) {
       this.element.style.setProperty("transform", "scaleX(-1)");
     } else {
       this.element.style.removeProperty("transform");
