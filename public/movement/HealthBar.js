@@ -16,6 +16,7 @@ export class HealthBar {
   }
 
   initElements() {
+    this.healthContainer.classList.add("health-bar");
     this.healthContainer.style.setProperty("position", "relative");
     this.healthContainer.style.setProperty("height", this.healthBarHeight + "px");
     this.healthContainer.style.setProperty("width", this.healthBarWidth + "px");

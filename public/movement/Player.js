@@ -24,6 +24,7 @@ const wizardAttack = [
   "sprites/wizard/attack-7.png",
   "sprites/wizard/attack-8.png",
   "sprites/wizard/attack-9.png",
+  "sprites/wizard/walk-0.png",
 ];
 
 const MOVING = "moving";
@@ -66,11 +67,16 @@ export class Player extends Entity {
     super._initEntity();
     this.element.append(this.healthBar.healthContainer);
     this.idleAnimation();
+    this.healthBar.takeDamage(25);
   }
 
   // movement logic
   onKeysPressed(keysPressed) {
     let [left, right, up, down] = [false, false, false, false];
+
+    if (this.attack.isAttacking()) {
+      return;
+    }
 
     if (keysPressed["ArrowLeft"] || keysPressed["a"] || keysPressed["A"]) {
       left = true;
@@ -84,10 +90,15 @@ export class Player extends Entity {
     if (keysPressed["ArrowDown"] || keysPressed["s"] || keysPressed["S"]) {
       down = true;
     }
+
     // attack logic
-    if (keysPressed[" "]) {
+    if (keysPressed[" "] && !this.attack.isAttacking() && this.animationState !== ATTACKING) {
       this.attack.doAttack();
-      this.isAttacking = true;
+      if (this.animationState !== ATTACKING) {
+        this.attackAnimation();
+        this.animationState = ATTACKING;
+        return;
+      }
     }
 
     const trySprint = !!keysPressed["Shift"] && Object.keys(keysPressed).length > 1;
@@ -96,8 +107,6 @@ export class Player extends Entity {
     const position = this.move(left, right, up, down);
 
     this.attack.updatePosition(position);
-
-    // animation stuff
 
     const standingStill = !left && !right && !up && !down;
 
@@ -115,8 +124,6 @@ export class Player extends Entity {
     if (left !== right) {
       this.changeDirection(left);
     }
-
-    console.log({ animationState: this.animationState });
   }
   // if user is sprinting and has enough stamina, the speed is set to sprinting speed
   // otherwise, the speed is set to walking speed.
@@ -179,11 +186,12 @@ export class Player extends Entity {
     };
   }
   moveAnimation() {
+    console.log("move");
     this.animateSquare(wizardMove);
   }
 
   attackAnimation() {
-    this.animateSquare(wizardAttack);
+    this.animateSquare(wizardAttack, 100, true);
   }
 
   idleAnimation() {
@@ -199,8 +207,19 @@ export class Player extends Entity {
 
     if (this.isGoingLeft === true) {
       this.element.style.setProperty("transform", "scaleX(-1)");
+      this.healthBar.healthContainer.style.setProperty("transform", "scaleX(-1)");
     } else {
       this.element.style.removeProperty("transform");
+      this.healthBar.healthContainer.style.removeProperty("transform");
     }
+  }
+  // overrides the method on Entity to make the player seem smaller
+  getBounds() {
+    return {
+      left: this.state.position[0] - this.state.size / 5,
+      right: this.state.position[0] + this.state.size / 5,
+      top: this.state.position[1] + this.state.size / 5,
+      bottom: this.state.position[1] - this.state.size / 5,
+    };
   }
 }

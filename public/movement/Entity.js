@@ -118,15 +118,22 @@ export class Entity {
     };
   }
 
-  animateSquare(spriteList, spriteSpeed = 100) {
+  animateSquare(spriteList, spriteSpeed = 100, once = false) {
     let currentFrame = 0;
 
     clearInterval(this.animationId);
 
-    this.animationId = setInterval(() => {
+    const animationFunction = () => {
       this.element.style.backgroundImage = `url(${spriteList[currentFrame]})`;
-      currentFrame = (currentFrame + 1) % spriteList.length;
-    }, spriteSpeed);
+      currentFrame = currentFrame + 1;
+      if (once && currentFrame === spriteList.length) {
+        clearInterval(this.animationId);
+      }
+      currentFrame = currentFrame % spriteList.length;
+    };
+
+    animationFunction();
+    this.animationId = setInterval(animationFunction, spriteSpeed);
   }
 
   stopAnimation() {

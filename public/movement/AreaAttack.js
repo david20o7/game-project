@@ -8,7 +8,7 @@ export class AreaAttack {
     borderColor: [255, 255, 255],
     opacity: 1,
 
-    maxRadius: 200,
+    maxRadius: 120,
 
     expandSpeed: 0.05,
     attacking: false,
@@ -85,5 +85,8 @@ export class AreaAttack {
       center: this.state.position,
       radius: this.state.radius,
     };
+  }
+  isAttacking() {
+    return this.state.attacking;
   }
 }

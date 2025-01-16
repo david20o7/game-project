@@ -12,6 +12,8 @@ export class Chaser extends Entity {
   hasImmunity = false;
   isGoingRight = false;
 
+  tolerance = 20;
+
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [100, 100],
@@ -37,19 +39,22 @@ export class Chaser extends Entity {
 
     let [left, right, up, down] = [false, false, false, false];
     // Chaser moving to player logic
-    if (chaserLeft < spriteLeft) {
+    if (spriteLeft - chaserLeft > this.tolerance) {
       right = true;
-    } else if (chaserLeft > spriteLeft) {
+    } else if (chaserLeft - spriteLeft > this.tolerance) {
       left = true;
     }
 
-    if (chaserBottom < spriteBottom) {
+    if (spriteBottom - chaserBottom > this.tolerance) {
       up = true;
-    } else if (chaserBottom > spriteBottom) {
+    } else if (chaserBottom - spriteBottom > this.tolerance) {
       down = true;
     }
 
-    this.changeDirection(right);
+    if (left !== right) {
+      this.changeDirection(right);
+    }
+
     this.move(left, right, up, down);
   }
 
@@ -84,8 +89,10 @@ export class Chaser extends Entity {
 
     if (this.goingRight === true) {
       this.element.style.setProperty("transform", "scaleX(-1)");
+      this.healthBar.healthContainer.style.setProperty("transform", "scaleX(-1)");
     } else {
       this.element.style.removeProperty("transform");
+      this.healthBar.healthContainer.style.removeProperty("transform");
     }
   }
 

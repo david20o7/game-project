@@ -81,7 +81,6 @@ export class Game {
 
     const newChaser = new Chaser(this.arenaDims, {
       speed: speedIncrease,
-      // color: getRandomColour(),
       color: null,
       position: getRandomEdge(this.arenaDims),
       size: chaserSize + 10,
@@ -154,7 +153,7 @@ export class Game {
     }
 
     // spawning new chasers
-    // this.addNewChaser(this.gameState.frameCount);
+    this.addNewChaser(this.gameState.frameCount);
     this.gameState.frameCount += 1;
     // runs at 60 frames per second
   }
