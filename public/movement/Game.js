@@ -3,7 +3,6 @@ import { Chaser } from "./Chaser.js";
 import {
   checkCollision,
   getRandomEdge,
-  getRandomColour,
   getSpeedFromSize,
   getRandomSize,
   areCircleAndSquareColliding,
@@ -21,16 +20,24 @@ const DEFAULT_STATE = {
 };
 
 export class Game {
-  gameState = { ...structuredClone(DEFAULT_STATE) };
+  gameState = structuredClone(DEFAULT_STATE);
   interval = 0;
 
   gameArena = document.querySelector("#box");
 
-  // override these method to get the score whenever it updates
+  // override to do something when the score is updated
   onScoreUpdated = (score) => {};
+
+  // override to do something when the stamina changes
   onStaminaUpdated = (stamina) => {};
+
+  // override to do something when the game is paused or resumed
   onPausedUpdated = (pause) => {};
+
+  // override to do something when the game is over
   onGameOver = () => {};
+
+  // override to do something when the game restarts
   onGameRestart = () => {};
 
   constructor() {
@@ -38,7 +45,9 @@ export class Game {
     this.player = new Player(this.arenaDims);
     this.player.addToBox(this.gameArena);
 
+    // adding event listener to record
     window.addEventListener("keydown", (e) => {
+      // keeping track of all keys pressed
       this.gameState.keysPressed[e.key] = true;
 
       // toggle pause when p is pressed
@@ -47,31 +56,33 @@ export class Game {
         this.onPausedUpdated(this.gameState.gamePaused);
       }
 
+      // restart the game when R is pressed
       if ((e.key === "r" || e.key === "R") && !this.gameState.gamePaused) {
         this.restartGame();
       }
     });
+
+    // no longer keeping track of the keys pressed when the key is lifted
     window.addEventListener("keyup", (e) => {
       delete this.gameState.keysPressed[e.key];
     });
   }
 
+  // restarting the game, restoring all the values and clearing the box
   restartGame() {
     this.removeAllChasers();
-    this.gameState = { ...structuredClone(DEFAULT_STATE) };
+    this.gameState = structuredClone(DEFAULT_STATE);
 
     this.onScoreUpdated(this.gameState.score);
     this.player.resetPlayer();
     this.onGameRestart();
   }
 
-  /*
-   - creates a chaser of a random size
-  - gives the chaser a speed inversely proportional to its size
-    - chaser speed then adjusted for difficulty
-   - random color also selected for chaser
-   - chaser placed somewhere on the edge of the play area
-   */
+  // creates a chaser of a random size
+  // gives the chaser a speed inversely proportional to its size
+  // chaser speed then adjusted for difficulty
+  // random color also selected for chaser
+  // chaser placed somewhere on the edge of the play area
   createChaser() {
     const chaserSize = getRandomSize();
 
@@ -81,7 +92,6 @@ export class Game {
 
     const newChaser = new Chaser(this.arenaDims, {
       speed: speedIncrease,
-      color: null,
       position: getRandomEdge(this.arenaDims),
       size: chaserSize + 10,
     });
@@ -90,10 +100,7 @@ export class Game {
     return newChaser;
   }
 
-  /**
-   * Adds new chasers, increasing the interval at which they're added
-   * as time goes on.
-   */
+  // adds new chasers, increasing the interval at which they're added as time goes on
   addNewChaser(currentFrame) {
     if (currentFrame % this.gameState.chaserSpawnRateFrames === 0) {
       const newChaser = this.createChaser();
@@ -112,14 +119,16 @@ export class Game {
       selectedChaser.remove();
     }
   }
-
+  // loop through game logic
   gameLoop() {
+    //checks if the game is paused or the player is dead
     if (this.gameState.gamePaused || this.player.isDead()) {
       return;
     }
-
+    // draws the player to the new position when a key is pressed
     this.player.onKeysPressed(this.gameState.keysPressed);
     this.player.draw();
+    // stamina is updated
     const staminaData = this.player.getStaminaData();
     this.onStaminaUpdated(staminaData);
 
@@ -157,12 +166,13 @@ export class Game {
     this.gameState.frameCount += 1;
     // runs at 60 frames per second
   }
-
+  // update the score
   updateScore(scoreToAdd) {
     this.gameState.score += scoreToAdd;
     this.onScoreUpdated(this.gameState.score);
   }
 
+  // start the game through calling the gameLoop
   startGame() {
     this.interval = setInterval(() => {
       this.gameLoop();

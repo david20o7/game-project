@@ -3,122 +3,127 @@ const SQL = require("sqlite3").verbose(); // import sqlite3
 const path = require("path");
 const session = require("express-session");
 const livereload = require("livereload");
-const connectLivereload = require("connect-livereload");
 const bcrypt = require("bcrypt");
 
-// Set up LiveReload server
-const liveReloadServer = livereload.createServer();
-liveReloadServer.watch(__dirname + "/public");
-
 const app = express();
-
-const PORT = 3000;
 
 const Database_Name = "my-database.db";
 const db = new SQL.Database(Database_Name);
 
-const saltRounds = 10;
-
-// copied
+//https://www.npmjs.com/package/express-session
 app.use(
   session({
-    secret: "your_session_secret",
+    secret: "keyboard cat",
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
   })
 );
 
+// DO NOT COPY:
+// Set up LiveReload server
+const connectLivereload = require("connect-livereload");
+const liveReloadServer = livereload.createServer();
+liveReloadServer.watch(__dirname + "/public");
 app.use(connectLivereload());
+//
+
 app.use(express.json());
 
-// Middleware to test if authenticated
-const isAuthenticated = (req, res, next) => {
+// Middleware to test if the user is logged in and redirects them to the login page
+const isLoggedIn = (req, res, next) => {
   if (req.session.user) {
     next();
   } else {
-    res.redirect("/accounts"); // Redirect to /accounts if not authenticated
+    res.redirect("/accounts");
   }
 };
 
 // Serve static files from 'public/movement'
-app.use("/movement", isAuthenticated, express.static(path.join(__dirname, "public", "movement")));
+// we do this to make sure that the user is authenticated before they are allowed to play the game
+app.use("/movement", isLoggedIn, express.static(path.join(__dirname, "public", "movement")));
 
 // Serve static files from 'public'
 app.use(express.static("public"));
 
+// Redirect to /accounts if not authenticated
 app.get("/", (req, res) => {
-  res.redirect("/accounts"); // Redirect to /accounts if not authenticated
+  res.redirect("/accounts");
 });
 
-// TODO: change this to work with the game_data instead
-app.get("/users", (req, res, next) => {
-  // Run a query where we want to process the output
-  db.all("SELECT * FROM game_data ORDER BY high_score DESC;", (error, rows) => {
-    if (error) {
-      res.status(500).send("An error occurred while querying the database");
-      console.error("Database query error: ", error);
-      return;
-    }
+app.get("/leaderboardData", (req, res) => {
+  // go through the game_data table and find the usernames from the user_id foreign key
+  db.all(
+    `SELECT game_data.high_score, account.username FROM game_data JOIN account ON account.user_id = game_data.user_id ORDER BY game_data.high_score DESC`,
+    (error, rows) => {
+      if (error) {
+        res.status(500).send("An error occurred while querying the database");
+        console.error("Database query error: ", error);
+        return;
+      }
 
-    if (rows.length === 0) {
-      res.status(404).send("No users found");
-      return;
-    }
+      if (rows.length === 0) {
+        res.status(404).send("No users found");
+        return;
+      }
 
-    res.json(rows);
-  });
+      res.json(rows);
+    }
+  );
 });
 
-// adding the score to the DB
-// TODO: change this to work with the user
+// adding the score to the database
 app.post("/submitScore", (req, res) => {
   const userData = req.session.user; // an entire row from the accounts table
+
+  if (userData === undefined) {
+    res.send();
+    return;
+  }
   const userId = userData.user_id;
   const { high_score } = req.body;
 
   db.run(`UPDATE game_data SET high_score = ? WHERE user_id = ? `, [high_score, userId]);
 
-  // db.get(`SELECT * FROM user WHERE name = ?`, [username], (err, result) => {
-  //   if (result === undefined) {
-  //     db.run("INSERT INTO user (name, score) VALUES(?, ?)", [username, score]);
-  //   } else {
-  //     if (result.score < score) {
-  //       db.run("UPDATE user SET score = ? WHERE name = ?", [score, username]);
-  //     }
-  //   }
-  // });
-
   res.send();
 });
 
+// used to get the high score of a user on the /movement page
 app.get("/getGameData", (req, res) => {
-  const userData = req.session.user; // an entire row from the accounts table
+  const userData = req.session.user; // an entire row from the accounts
+
+  if (userData === undefined) {
+    res.status(409).json({});
+    return;
+  }
+
   const userId = userData.user_id;
-  db.get(`SELECT * FROM game_data WHERE user_id = ?`, [userId], (err, result) => {
-    res.json(result || {});
+  const username = userData.username;
+
+  db.get(`SELECT * FROM game_data WHERE user_id = ?`, [userId], (error, result) => {
+    if (error || !result) {
+      res.status(409).json({});
+    } else {
+      // we add the username from the session so we can display it
+      result.username = username;
+      res.json(result);
+    }
   });
 });
 
-app.get("/userHighScore", (req, res) => {
-  const params = req.query;
-  db.get(`SELECT * FROM user WHERE name = ?`, [params.username], (err, result) => {
-    res.json(result || {});
-  });
-});
-
+// shows the accounts table (for testing)
 app.get("/accountList", (req, res) => {
   db.all("SELECT * FROM account", (error, rows) => {
     res.json(rows);
   });
 });
 
-app.post("/endpoint", (req, res) => {
-  const { username } = req.body;
-
-  db.get("SELECT * FROM account WHERE username = ? ", [username]);
-});
-
+// TODO: David Speak Spellcheck [ ]
+// 1. check if the username and password are valid
+// 2. we select the row from account with the username
+// 3. if we find a row its compared wit the hashed passwords to see if they match
+// 4. when the user logs in a new session is made for them
+// 5. if all goes well we send a positive response
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -128,43 +133,54 @@ app.post("/login", (req, res) => {
   }
 
   db.get("SELECT * FROM account WHERE username = ?", [username], (error, row) => {
+    // user is not found in the database
     if (error) {
       res.status(500).send("Invalid username or password.");
     } else if (row) {
-      // Load hash from your password DB.
+      // Load hash from the password DB and compare it with the password from the request
+      // the bcrypt.compareSync hashes the password so it doesn't have to be done
       const isPasswordCorrect = bcrypt.compareSync(password, row.password);
 
       if (!isPasswordCorrect) {
         res.status(401).send("Invalid username or password.");
-      }
+      } else {
+        // COPIED: https://github.com/expressjs/session?tab=readme-ov-file#user-login
+        req.session.regenerate((err) => {
+          if (err) next(err);
 
-      // COPIED: https://github.com/expressjs/session?tab=readme-ov-file#user-login
-      req.session.regenerate((err) => {
-        if (err) next(err);
-
-        // store user information in session, typically a user id
-        req.session.user = row;
-        req.session.save((err) => {
-          if (err) {
-            res.status(500).send("something wrong with the session");
-          } else {
-            res.status(200).send("Login successful!");
-          }
+          // store user information in session
+          req.session.user = row;
+          req.session.save((err) => {
+            if (err) {
+              res.status(500).send("something wrong with the session");
+            } else {
+              res.status(200).send("Login successful!");
+            }
+          });
         });
-      });
+      }
     } else {
       res.status(401).send("Invalid username or password.");
     }
   });
 });
 
+// endpoint which  logs the user out by destroying the session and redirects the user back to accounts
 app.get("/logout", (req, res) => {
   req.session.user = null;
   req.session.destroy();
 
-  // TODO: Add 'logout successful' message
+  // redirect
   res.redirect("/accounts");
 });
+
+// server endpoint for registering the user
+// 1. check if the username and password are valid
+// 2. hashes the password before putting into the db
+// 3. creates a row in the account table containing the username and hashed password
+// 4. get the row we just created because we need the primary key when creating the row in game_data
+// 5. create a row in the game_data table using the user_id primary key as a foreign key
+// 6. respond with 201 if everything went ok or 409 if any errors occurred along the way
 
 app.post("/register", async (req, res) => {
   const { password, username } = req.body;
@@ -175,61 +191,55 @@ app.post("/register", async (req, res) => {
   }
 
   // COPIED: https://github.com/kelektiv/node.bcrypt.js?tab=readme-ov-file#usage
+  // using bcrypt to hash the password before storing it into the database
+  const saltRounds = 10;
+
   const hash = bcrypt.hashSync(password, saltRounds);
 
-  const createGameData = (error, row) => {
-    if (!row || error) {
-      res.status(409).send("Cannot find account");
-    } else {
-      const { user_id, username } = row;
+  // add the username and password to the account table
+  db.run(
+    "INSERT INTO account (username, password) VALUES(?, ?)",
+    [username, hash],
 
-      db.run(
-        "INSERT INTO game_data (user_id, character_name, high_score) VALUES(?, ?, ?)",
-        [user_id, username, 0],
-        (error) => {
-          if (error) {
-            res.status(409).send("Cannot insert user info into leaderboard");
+    (error) => {
+      if (error) {
+        // if username exists there will be an error because username is set to unique
+        res.status(409).send("username exists");
+      } else {
+        // Get the username from the account table that was just created
+        db.get("SELECT * FROM account WHERE username = ?", [username], (error, row) => {
+          if (!row || error) {
+            res.status(409).send("Cannot find account");
           } else {
-            res.status(201).send();
+            // add an entry into the game_data table for the user that was just created
+            db.run(
+              "INSERT INTO game_data (user_id, high_score) VALUES(?, ?)",
+              [row.user_id, 0],
+              (error) => {
+                if (error) {
+                  // checking if inserting has failed
+                  res.status(409).send("Cannot insert user info into leaderboard");
+                } else {
+                  res.status(201).send();
+                }
+              }
+            );
           }
-        }
-      );
+        });
+      }
     }
-  };
-
-  const findNewUser = (error) => {
-    if (error) {
-      res.status(409).send("username exists");
-    } else {
-      db.get("SELECT * FROM account WHERE username = ?", [username], createGameData);
-    }
-  };
-
-  db.run("INSERT INTO account (username, password) VALUES(?, ?)", [username, hash], findNewUser);
+  );
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  // console.log(`try http://localhost:${PORT}/movement`);
-  console.log(`To stop the server, CTRL + C`);
+// starts server on localhost 3000
+app.listen(3000, () => {
+  console.log("Server is running on http://localhost:3000");
 });
 
+// TO DELETE, DO NOT COPY
 liveReloadServer.server.once("connection", () => {
   setTimeout(() => {
     liveReloadServer.refresh("/");
   }, 100);
 });
-
-class DatabaseThing {
-  run(query, arrayOfVariablesForQuery, someFunction) {
-    let error = null;
-    // does some magic to run the query with the variables in the database
-
-    // if there is some error with the query,
-    error = "something";
-
-    someFunction(error);
-  }
-}
-
-const deeBee = new DatabaseThing();
+//

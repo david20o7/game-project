@@ -3,6 +3,7 @@ import { AreaAttack } from "./AreaAttack.js";
 import { Stamina } from "./Stamina.js";
 import { HealthBar } from "./HealthBar.js";
 
+// move sprite frames
 const wizardMove = [
   "sprites/wizard/walk-0.png",
   "sprites/wizard/walk-1.png",
@@ -16,8 +17,10 @@ const wizardMove = [
   "sprites/wizard/walk-9.png",
 ];
 
+// still sprite frames
 const wizardStill = ["sprites/wizard/walk-0.png", "sprites/wizard/walk-9.png"];
 
+// attack sprite frames
 const wizardAttack = [
   "sprites/wizard/attack-5.png",
   "sprites/wizard/attack-6.png",
@@ -27,6 +30,7 @@ const wizardAttack = [
   "sprites/wizard/walk-0.png",
 ];
 
+// defined constants to check when to use the animations
 const MOVING = "moving";
 const IDLE = "idle";
 const ATTACKING = "attacking";
@@ -42,13 +46,11 @@ export class Player extends Entity {
   attack = new AreaAttack();
   stamina = new Stamina();
   healthBar;
-  // objects that define the player
+  // objects that define the arena and the player
   constructor(arenaDims, initialState) {
     super(arenaDims, {
       position: [400, 400],
       size: 75,
-      // color: [233, 180, 194],
-      color: null,
       elementId: "player",
       speed: 2,
       walkingSpeed: 2,
@@ -62,15 +64,15 @@ export class Player extends Entity {
 
     this.healthBar = new HealthBar(this.state.maxHealth, this.state.size);
   }
-
+  // initialises the player entity with healthbar, idle animation and
   _initEntity() {
     super._initEntity();
     this.element.append(this.healthBar.healthContainer);
     this.idleAnimation();
-    this.healthBar.takeDamage(25);
   }
 
   // movement logic
+  // will set the direction to true if the key is pressed
   onKeysPressed(keysPressed) {
     let [left, right, up, down] = [false, false, false, false];
 
@@ -92,6 +94,7 @@ export class Player extends Entity {
     }
 
     // attack logic
+    // if shift is pressed then it will set attacking to true and will display the attacking animation to the player
     if (keysPressed[" "] && !this.attack.isAttacking() && this.animationState !== ATTACKING) {
       this.attack.doAttack();
       if (this.animationState !== ATTACKING) {
@@ -102,7 +105,7 @@ export class Player extends Entity {
     }
 
     const trySprint = !!keysPressed["Shift"] && Object.keys(keysPressed).length > 1;
-    this.sprint(trySprint);
+    this.sprint(trySprint); // handle the sprinting logic
 
     const position = this.move(left, right, up, down);
 
@@ -110,10 +113,13 @@ export class Player extends Entity {
 
     const standingStill = !left && !right && !up && !down;
 
+    // switch to idle animation when player is still
+    // try to only start the animation once
     if (standingStill && this.animationState !== IDLE) {
       this.idleAnimation();
       this.animationState = IDLE;
     } else if (
+      // switch to moving animation when player is moving and not sprinting
       !standingStill &&
       this.animationState !== MOVING &&
       this.animationState !== SPRINTING
@@ -125,83 +131,99 @@ export class Player extends Entity {
       this.changeDirection(left);
     }
   }
+
   // if user is sprinting and has enough stamina, the speed is set to sprinting speed
   // otherwise, the speed is set to walking speed.
   sprint(trySprinting) {
     this.stamina.useStamina(trySprinting);
+
+    // checks whether the player can still sprint of if they're out of stamina
     const canSprint = this.stamina.canUseStamina();
 
+    // the player should sprint if they  want to sprint and are able to do so
     const shouldSprint = canSprint && trySprinting;
-    this.updateSpeed(shouldSprint ? this.state.sprintingSpeed : this.state.walkingSpeed);
 
+    this.updateSpeed(shouldSprint ? this.state.sprintingSpeed : this.state.walkingSpeed);
+    // if the player is sprinting then switch to sprinting animation
     if (shouldSprint && this.animationState !== SPRINTING) {
       this.sprintAnimation();
       this.animationState = SPRINTING;
+      // if the player is done sprinting then switch to the moving animation
     } else if (!shouldSprint && this.animationState === SPRINTING) {
       this.moveAnimation();
       this.animationState = MOVING;
     }
   }
-
+  // handles the player taking damage
   getHit() {
-    if (this.hasImmunity === false) {
-      this.healthBar.takeDamage(25);
-
-      setTimeout(() => {
-        this.hasImmunity = false;
-        this._updateEntityFlashing(false);
-      }, 2000);
-
-      this.hasImmunity = true;
-      this._updateEntityFlashing(true);
+    // don't do anything if the player is currently immune
+    if (this.hasImmunity === true) {
+      return;
     }
+
+    // reduce health by 25 when hit
+    this.healthBar.takeDamage(25);
+
+    // after 2 seconds it will cancel player immunity
+    setTimeout(() => {
+      this.hasImmunity = false;
+      this._updateEntityFlashing(false);
+    }, 2000);
+    // gives player immunity after getting hit
+    this.hasImmunity = true;
+    this._updateEntityFlashing(true);
   }
 
+  // upades the player's drawn elements on the screen
   draw() {
     super.draw();
     this.attack.draw();
-    this.stamina.draw();
     this.healthBar.draw();
   }
 
+  // add the player and the attack to the box
   addToBox(box) {
     box.append(this.element, this.attack.element);
   }
-
+  // resets player to its initial state
   resetPlayer() {
     this.state.position = [400, 400];
     this.healthBar.resetHealth();
     this.stamina.resetStamina();
     this.draw();
   }
-
+  // checks if player is dead
   isDead() {
     return this.healthBar.getHealth() <= 0;
   }
-
+  // gets the current stamina data
   getStaminaData() {
     return {
       value: this.stamina.getStamina(),
       colour: this.stamina.getStaminaColour(),
     };
   }
+
+  // starts the moving animation
   moveAnimation() {
-    console.log("move");
     this.animateSquare(wizardMove);
   }
-
+  // starts the attack animation
   attackAnimation() {
     this.animateSquare(wizardAttack, 100, true);
   }
-
+  // starts the idle animation
   idleAnimation() {
     this.animateSquare(wizardStill, 500);
   }
 
+  // starts the sprint animation
   sprintAnimation() {
     this.animateSquare(wizardMove, 50);
   }
-
+  // decides if the player is going left
+  // if the player is going left it will invert the images' X coordinate to make it face left
+  // otherwise it will remain in the same direction
   changeDirection(isGoingLeft) {
     this.isGoingLeft = isGoingLeft;
 

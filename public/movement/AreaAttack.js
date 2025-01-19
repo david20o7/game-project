@@ -5,7 +5,7 @@ export class AreaAttack {
     elementId: undefined,
     position: [100, 100],
     radius: 1,
-    borderColor: [255, 255, 255],
+    borderColor: [150, 150, 255],
     opacity: 1,
 
     maxRadius: 120,
@@ -28,20 +28,21 @@ export class AreaAttack {
       this.state.radius = clamp(this.state.expand * this.state.maxRadius, 0, this.state.maxRadius);
 
       if (this.state.radius === this.state.maxRadius) {
-        this.state.attacking = false;
         this.state.radius = 0;
+        setTimeout(() => {
+          this.state.attacking = false;
+        }, 100);
       }
     }
   }
 
-  /**
-   * Sets the initial HTML/CSS attributes of the attack
-   * Is only needed to be run once
-   */
+  //  Sets the initial HTML/CSS attributes of the attack
+  //  Is only needed to be run once
+
   initializeAttack() {
     this.element.setAttribute("id", this.state.elementId);
     this.element.style.setProperty("position", "absolute");
-    this.element.style.setProperty("border", `1px solid rgb(${this.state.borderColor.join(",")})`);
+    this.element.style.setProperty("border", `3px solid rgb(${this.state.borderColor.join(",")})`);
     this.element.style.setProperty("border-radius", "50%");
   }
 
@@ -60,16 +61,14 @@ export class AreaAttack {
     this.element.style.setProperty("opacity", this.state.opacity);
   }
 
+  //starts attacking
   doAttack() {
     this.state.attacking = true;
     this.state.radius = 0;
     this.state.expand = 0;
-
-    // this.state.opacity = isVisible ? 1 : 0;
-
     this.attackExpand();
   }
-
+  //displays the attack in the game
   draw() {
     this.drawElementPosition();
     this.drawElementOpacity();
@@ -80,12 +79,14 @@ export class AreaAttack {
     this.state.position = newPosition;
   }
 
+  // gets the circle dimentions and position of the circle
   getCircle() {
     return {
       center: this.state.position,
       radius: this.state.radius,
     };
   }
+  // validates if the player is attacking
   isAttacking() {
     return this.state.attacking;
   }

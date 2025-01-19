@@ -1,6 +1,7 @@
+// this class holds the score and high score of the player
 export class Score {
   constructor() {
-    this.highestScore = parseInt(localStorage.getItem("highestScore")) || 0;
+    this.highestScore = 0;
     this.currentScore = 0;
     this.scoreElement = document.createElement("div");
     this.scoreElement.style.position = "absolute";
@@ -12,22 +13,31 @@ export class Score {
     document.body.append(this.scoreElement);
   }
 
-  // when we store highest score
+  // sets the high score and replaces the highest score with the score if it's greater
   setScore(amount) {
     this.currentScore = amount;
     if (this.currentScore > this.highestScore) {
       this.highestScore = this.currentScore;
-      localStorage.setItem("highestScore", this.highestScore);
     }
     this.updateScoreDisplay();
   }
 
+  // displays the score and highscore
   updateScoreDisplay() {
     this.scoreElement.innerText = `Highest Score: ${this.highestScore}\nScore: ${this.currentScore}`;
   }
-
+  // resets the score
   resetCurrentScore() {
     this.currentScore = 0;
     this.updateScoreDisplay();
+  }
+  // sets the highscore
+  setHighScore(highScore) {
+    this.highestScore = highScore;
+    this.updateScoreDisplay();
+  }
+  // gets the highscore value
+  getHighScore() {
+    return this.highestScore;
   }
 }

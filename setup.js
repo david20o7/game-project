@@ -1,9 +1,11 @@
-const SQL = require("sqlite3"); //import sqlite3 import Java.util.Database
-const fs = require("fs"); // import FileSystem
+// importing file system and database modules
+
+const fs = require("fs");
+const SQL = require("sqlite3");
 
 const Database_Name = "my-database.db";
 
-//deletes file if it exists
+// deletes database file if it exists
 if (fs.existsSync(Database_Name)) {
   fs.unlinkSync(Database_Name);
   console.log(`Deleted existing database file: ${Database_Name}`);
@@ -11,9 +13,9 @@ if (fs.existsSync(Database_Name)) {
 // creates a new database
 const db = new SQL.Database(Database_Name);
 
-// //interact with the database
+// used code from https://www.npmjs.com/package/sqlite3#usage:
 db.serialize(() => {
-  // TODO: Remove eventually
+  // creates the account table with the username and password fields
   db.run(`
     CREATE TABLE account (
       user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -22,12 +24,12 @@ db.serialize(() => {
     );
   `);
 
-  // should be changed to only hold display name and high score.
+  // creates game_data table with character_name and highscore fields
+  // we use the character_name as the username
   db.run(`
     CREATE TABLE IF NOT EXISTS game_data (
       gamedata_id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      character_name TEXT,
       high_score INTEGER DEFAULT 0,
       FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE CASCADE
     );

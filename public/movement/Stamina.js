@@ -7,40 +7,20 @@ export class Stamina {
   canRegenerate = true;
   staminaBarColor = "green";
 
-  // staminaContainer = document.createElement("div"); // index.html <div></div>
-  // staminaBar = document.createElement("div"); // index.html <div></div>
-
-  // constructor() {
-  // this.initElements();
-  // }
-
-  // display stamina elements
-
-  // initElements() {
-  //   this.staminaContainer.style.setProperty("height", "30px");
-  //   this.staminaContainer.style.setProperty("width", "300px");
-  //   this.staminaContainer.style.setProperty("border", "1px solid white");
-
-  //   this.staminaBar.style.setProperty("height", "100%");
-  //   this.staminaBar.style.setProperty("width", "100%");
-  //   this.staminaBar.style.setProperty("background-color", "green");
-
-  //   this.staminaContainer.append(this.staminaBar);
-  // }
-  /*if stamina is used until stamina = 0, there will be a stamina lock for 1 second meaning the player will not be able to use the 
- stamina until it is above 50 */
+  //if stamina is used until stamina = 0, there will be a stamina lock for 1 second meaning the player will not be able to use the
+  // stamina until it is above 50
   manageStaminaLock() {
     if (this.stamina === 0) {
       if (!this.staminaLock) {
         this.staminaLock = true;
         this.canRegenerate = false;
-
+        // waits 1 second before stamina can start regenerating
         setTimeout(() => {
           this.canRegenerate = true;
         }, 1000); // Lock for 1 second
       }
 
-      // stay for a second
+      // player cant sprint until they have regian 50 stamina
     } else if (this.stamina >= 50) {
       this.staminaLock = false;
     }
@@ -56,7 +36,7 @@ export class Stamina {
 
     this.staminaBarColor = "rgb(" + rgb.join(",") + ")";
   }
-
+  // function to lose stamina when using it and regeneration
   useStamina(isUsing) {
     let newStaminaValue = this.stamina;
 
@@ -65,30 +45,25 @@ export class Stamina {
     } else if (this.canRegenerate) {
       newStaminaValue += 1;
     }
-
+    // makes sure stamina stays between 0 and its maximum value
     this.stamina = clamp(newStaminaValue, 0, this.maxStamina);
-
+    // update stamina lock depending on the new value
     this.manageStaminaLock();
   }
-
+  // stops the stamina lock from taking place
   canUseStamina() {
     return !this.staminaLock;
   }
 
-  // displays stamina
+  // gets the initial stamina
   resetStamina() {
     this.stamina = this.maxStamina;
-  }
-
-  draw() {
-    // this.updateStaminaColor();
-    // this.staminaBar.style.setProperty("width", this.stamina + "%");
-    // this.staminaBar.style.setProperty("background-color", this.staminaBarColor);
   }
 
   getStamina() {
     return this.stamina;
   }
+  // gets the stamina colour
   getStaminaColour() {
     this.updateStaminaColor();
     return this.staminaBarColor;

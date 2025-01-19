@@ -172,7 +172,7 @@ git push --force .keyboardKey {
   font-family: "Silkscreen", sans-serif;
 }
 
-.backButton {
+.top-screen-button {
   font-family: "Silkscreen", sans-serif;
   background-color: rgb(106, 0, 0);
   color: white;
@@ -187,6 +187,22 @@ git push --force .keyboardKey {
   margin: 10px;
   z-index: 9999;
 }
-.backButton a {
+.top-screen-button a {
   color: white;
+}
+
+.top-screen-button a:visited {
+  color: white;
+  /* text-decoration-color: hotpink; */
+}
+
+#backButton {
+  top: 50px !important;
+  background-color: rgb(50, 50, 50);
+}
+
+#username-text {
+  position: absolute;
+  top: 0;
+  left: 110px;
 }

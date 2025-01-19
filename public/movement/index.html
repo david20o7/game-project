@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sprite Movement</title>
+    <title>Dungeon Seeker</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,17 +14,23 @@
     />
 
     <link rel="stylesheet" href="style.css" />
-    <script type="module" defer src="index.js"></script>
+    <script type="module" defer src="script.js"></script>
   </head>
 
   <body>
-    <button type="button" class="backButton">
+    <button type="button" id="logoutButton" class="top-screen-button">
       <a href="/logout">LOG OUT</a>
     </button>
 
+    <button type="button" id="backButton" class="top-screen-button">
+      <a href="/movement">Back</a>
+    </button>
+
+    <p id="username-text">not logged in</p>
+
     <div id="startGameScreen" class="overlay">
       <div id="startGameScreenBox" class="overlayBox">
-        <span class="bigText">Game Title</span>
+        <span class="bigText">Dungeon Seeker</span>
 
         <span id="startGameButton" class="smallText"
           >[<span class="spacer"></span>start<span class="spacer"></span>]</span
@@ -33,6 +39,7 @@
       </div>
     </div>
 
+    <!-- pause screen -->
     <div id="pauseScreen" class="overlay">
       <div id="pauseBox" class="overlayBox">
         <span class="bigText">PAUSED</span>
@@ -40,6 +47,7 @@
       </div>
     </div>
 
+    <!-- panel on the left containing the game instructions -->
     <div id="helpScreen" class="guideScreen">
       <span class="smallText">hold <span class="keyboardKey">shift</span> to sprint</span>
       <span class="smallText">press <span class="keyboardKey">p</span> to pause</span>
@@ -51,6 +59,7 @@
       </span>
     </div>
 
+    <!-- death screen -->
     <div id="deathScreen" class="overlay">
       <div id="gameOverScreen" class="overlayBox">
         <span class="bigText">You Died!</span>
